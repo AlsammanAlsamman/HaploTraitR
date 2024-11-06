@@ -144,6 +144,7 @@ Select an SNP and create a boxplot to compare phenotypic values among different 
 library(ggpubr)
 snp <- "2H_JHI-Hv50k-2016-79696"
 plotHapCombBoxPlot(snp, SNPcombTables, t_test_snpComp)
+ggsave(file.path(outfolder, paste0(snp, "_boxplot.png")), width = 8, height = 6)
 ```
 
 ### Plot Haplotype Distribution
@@ -151,7 +152,10 @@ plotHapCombBoxPlot(snp, SNPcombTables, t_test_snpComp)
 Visualize the distribution of haplotypes for a specific SNP.
 
 ```{r}
+library(ggplot2)
+library(dplyr)  # If you are also using %>% 
 plotHapCombDistribution(snp, SNPcombTables)
+ggsave(file.path(outfolder, paste0(snp, "_distribution.png")), width = 8, height = 6)
 ```
 
 ## Conclusion
