@@ -1,9 +1,10 @@
 #' Calculate the p-value for a SNP combinations
 #' @param comb_sample_Tables A list of sample tables for each SNP combination
 #' @return A data frame with the p-values for the SNP combinations
-#' @importFrom magrittr %>%
 #' @importFrom rstatix t_test
 #' @importFrom rstatix add_xy_position
+#' @importFrom dplyr mutate
+#' @importFrom magrittr %>%
 #' @export
 testSNPcombs <- function(comb_sample_Tables) {
   snps <- names(comb_sample_Tables)
@@ -18,11 +19,11 @@ testSNPcombs <- function(comb_sample_Tables) {
     tryCatch({
       # Ensure there are at least two levels in "Comb" and sufficient data for testing
       if (length(unique(comb_sample$Comb)) > 1 && nrow(comb_sample) > 2) {
-        stat.test <- comb_sample %>% t_test(Pheno ~ Comb)
-        stat.test <- stat.test %>% add_xy_position(x = "Pheno")
+        stat.test <- t_test(comb_sample, Pheno ~ Comb)
+        stat.test <-  add_xy_position(stat.test, x = "Pheno")
         # Set xmin and xmax based on the group1 and group2 column values
-        stat.test <- stat.test %>%
-          mutate(xmin = as.numeric(factor(group1, levels = levels(comb_sample$Comb))),
+        stat.test <-
+          mutate(stat.test, xmin = as.numeric(factor(group1, levels = levels(comb_sample$Comb))),
                  xmax = as.numeric(factor(group2, levels = levels(comb_sample$Comb))))
         stat.test$snp <- snp
         if (nrow(stat.test) > 0) {

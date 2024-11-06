@@ -125,11 +125,6 @@ SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
 Perform statistical testing on SNP combinations to see if there are significant associations with phenotypes.
 
 ```{r}
-# I am going to fix this
-library(magrittr)
-library(rstatix)
-
-#The target code
 t_test_snpComp <- testSNPcombs(SNPcombTables)
 ```
 
@@ -141,10 +136,10 @@ Select an SNP and create a boxplot to compare phenotypic values among different 
 
 ```{r}
 #library(ggplot2)
-library(ggpubr)
+#library(ggpubr)
 snp <- "2H_JHI-Hv50k-2016-79696"
 plotHapCombBoxPlot(snp, SNPcombTables, t_test_snpComp)
-ggsave(file.path(outfolder, paste0(snp, "_boxplot.png")), width = 8, height = 6)
+ggplot2::ggsave(file.path(outfolder, paste0(snp, "_boxplot.png")), width = 8, height = 6)
 ```
 
 ### Plot Haplotype Distribution
@@ -152,10 +147,8 @@ ggsave(file.path(outfolder, paste0(snp, "_boxplot.png")), width = 8, height = 6)
 Visualize the distribution of haplotypes for a specific SNP.
 
 ```{r}
-library(ggplot2)
-library(dplyr)  # If you are also using %>% 
 plotHapCombDistribution(snp, SNPcombTables)
-ggsave(file.path(outfolder, paste0(snp, "_distribution.png")), width = 8, height = 6)
+ggplot2::ggsave(file.path(outfolder, paste0(snp, "_distribution.png")), width = 8, height = 6)
 ```
 
 ## Conclusion

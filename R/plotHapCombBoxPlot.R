@@ -2,7 +2,8 @@
 #' @param snp The SNP of interest
 #' @param SNPcombTables A list of data frames containing haplotype combinations and phenotype values
 #' @param t_test_snpComp A list of t-test results for haplotype combinations
-#' @importFrom ggplot2 ggplot geom_violin theme_minimal theme element_text labs
+#' @import ggplot2
+#' @import ggpubr
 #' @export
 plotHapCombBoxPlot <- function(snp, SNPcombTables, t_test_snpComp) {
   # Extract the data frame for the specified SNP

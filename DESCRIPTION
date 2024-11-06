@@ -14,5 +14,6 @@ Imports:
     igraph,
     Rcpp (>= 1.0.3),
     magrittr,
-    rstatix
+    rstatix,
+    dplyr
 LinkingTo: Rcpp

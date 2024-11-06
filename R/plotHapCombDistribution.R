@@ -1,7 +1,7 @@
 #' Plotting Haplotype Combination Distribution for specific SNP
 #' @param snp The SNP of interest
 #' @param SNPcombTables A list of data frames containing haplotype combinations and phenotype values
-#' @importFrom ggplot2 ggplot geom_density theme_minimal labs
+#' @import ggplot2
 #' @export
 plotHapCombDistribution <- function(snp, SNPcombTables) {
   # Extract the data frame for the specified SNP
