@@ -58,7 +58,6 @@ Load the hapmap file to access genotype data for the analysis.
 
 ```{r}
 hapmap <- readHapmap(hapfile)
-head(hapmap)
 ```
 
 ## Step 2: Cluster SNPs by Chromosome
@@ -75,7 +74,6 @@ Calculate linkage disequilibrium (LD) values for each SNP cluster.
 
 ```{r}
 LDsInfo <- computeLDclusters(hapmap, haplotype_clusters)
-head(LDsInfo)
 ```
 
 ## Step 4: Save LD Matrices
@@ -93,7 +91,6 @@ Cluster SNPs based on LD values and apply frequency thresholding to derive haplo
 ```{r}
 clusterLDs <- clusterLD(LDsInfo, ld_threshold, cls_count = 3)
 haplotypes <- convertLDclusters2Haps(hapmap, clusterLDs, comb_freq_threshold)
-head(haplotypes)
 ```
 
 ## Step 6: Get Sample Haplotypes and Save
@@ -121,7 +118,6 @@ Generate tables to link SNP combinations with phenotype data.
 
 ```{r}
 SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
-head(SNPcombTables)
 ```
 
 ## Step 9: Perform t-tests on SNP Combinations
@@ -135,7 +131,6 @@ library(rstatix)
 
 #The target code
 t_test_snpComp <- testSNPcombs(SNPcombTables)
-t_test_snpComp
 ```
 
 ## Step 10: Visualize Results
