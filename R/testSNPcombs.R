@@ -1,6 +1,9 @@
 #' Calculate the p-value for a SNP combinations
 #' @param comb_sample_Tables A list of sample tables for each SNP combination
 #' @return A data frame with the p-values for the SNP combinations
+#' @importFrom magrittr %>%
+#' @importFrom rstatix t_test
+#' @importFrom rstatix add_xy_position
 #' @export
 testSNPcombs <- function(comb_sample_Tables) {
   snps <- names(comb_sample_Tables)

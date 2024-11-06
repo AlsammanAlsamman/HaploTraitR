@@ -1,0 +1,165 @@
+---
+title: "HaploTraitR Package Usage"
+output: html_document
+---
+
+This R Markdown document provides a tutorial for using the `HaploTraitR` package to analyze haplotype clusters, linkage disequilibrium (LD), and SNP combinations and assess their impact on phenotypic traits in barley. The document demonstrates how to read GWAS, hapmap, and phenotype files, compute LD matrices, cluster SNPs, and visualize the results.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(HaploTraitR)
+```
+
+## Introduction
+
+This document demonstrates how to use the `HaploTraitR` package to analyze haplotype clusters, linkage disequilibrium (LD), and SNP combinations and assess their impact on phenotypic traits in barley. 
+
+We will go through the steps of reading GWAS, hapmap, and phenotype files, computing LD matrices, clustering SNPs, and visualizing the results.
+
+### Input Files
+- `hapfile`: The haplotype file (e.g., `"Barley_50K_KNNimp.hmp.txt"`)
+- `gwasfile`: GWAS results file (e.g., `"SignificantSNP_GWAS.csv"`)
+- `phenofile`: Phenotype file (e.g., `"Pheno_ANN19.tsv"`)
+- `outfolder`: Folder to save output files
+
+```{r}
+# Define file paths and output folder
+hapfile <- "sampledata/Barley_50K_KNNimp.hmp.txt"
+gwasfile <- "sampledata/SignificantSNP_GWAS.tsv"
+phenofile <- "sampledata/Pheno_ANN19.tsv"
+outfolder <- "sampleout"
+```
+
+### Setting Thresholds
+
+Set thresholds for distance, clustering, LD, and combination frequency.
+
+```{r}
+dist_threshold <- 1000000 # Distance threshold (1Mb)
+dist_cluster_count <- 5   # Minimum SNPs in a cluster
+ld_threshold <- 0.3       # Minimum LD value
+comb_freq_threshold <- 0.1 # Minimum genotype frequency for a combination
+```
+
+## Step 1: Reading Data Files
+
+### Load GWAS Data
+
+First, load the GWAS data to identify significant SNPs for clustering.
+
+```{r}
+gwas <- readGWAS(gwasfile, sep = "\t")
+head(gwas)
+```
+
+### Load Haplotype Data
+
+Load the hapmap file to access genotype data for the analysis.
+
+```{r}
+hapmap <- readHapmap(hapfile)
+head(hapmap)
+```
+
+## Step 2: Cluster SNPs by Chromosome
+
+Cluster SNPs within the specified distance threshold around significant SNPs from the GWAS data.
+
+```{r}
+haplotype_clusters <- getHaplotypeClusters(gwas, hapmap, dist_threshold, dist_cluster_count)
+```
+
+## Step 3: Compute LD Matrices
+
+Calculate linkage disequilibrium (LD) values for each SNP cluster.
+
+```{r}
+LDsInfo <- computeLDclusters(hapmap, haplotype_clusters)
+head(LDsInfo)
+```
+
+## Step 4: Save LD Matrices
+
+Save the LD matrices to the specified output folder.
+
+```{r}
+saveLDs2folder(LDsInfo, outfolder)
+```
+
+## Step 5: Cluster LD Values and Convert to Haplotypes
+
+Cluster SNPs based on LD values and apply frequency thresholding to derive haplotypes.
+
+```{r}
+clusterLDs <- clusterLD(LDsInfo, ld_threshold, cls_count = 3)
+haplotypes <- convertLDclusters2Haps(hapmap, clusterLDs, comb_freq_threshold)
+head(haplotypes)
+```
+
+## Step 6: Get Sample Haplotypes and Save
+
+Extract the haplotype combinations for samples and save to a CSV file.
+
+```{r}
+snpcombsample <- getHapCombSamples(haplotypes, hapmap)
+snpcombsample <- as.data.frame(snpcombsample)
+write.csv(snpcombsample, file = file.path(outfolder, "haplotype_combinations.csv"), row.names = FALSE)
+```
+
+## Step 7: Read Phenotype Data
+
+Read the phenotype data for associating haplotypes with phenotypic traits.
+
+```{r}
+pheno <- read.csv(phenofile, header = TRUE, sep = "\t")
+head(pheno)
+```
+
+## Step 8: Generate SNP Combination Tables
+
+Generate tables to link SNP combinations with phenotype data.
+
+```{r}
+SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
+head(SNPcombTables)
+```
+
+## Step 9: Perform t-tests on SNP Combinations
+
+Perform statistical testing on SNP combinations to see if there are significant associations with phenotypes.
+
+```{r}
+# I am going to fix this
+library(magrittr)
+library(rstatix)
+
+#The target code
+t_test_snpComp <- testSNPcombs(SNPcombTables)
+t_test_snpComp
+```
+
+## Step 10: Visualize Results
+
+### Plot Haplotypes as Boxplot
+
+Select an SNP and create a boxplot to compare phenotypic values among different haplotype combinations.
+
+```{r}
+#library(ggplot2)
+library(ggpubr)
+snp <- "2H_JHI-Hv50k-2016-79696"
+plotHapCombBoxPlot(snp, SNPcombTables, t_test_snpComp)
+```
+
+### Plot Haplotype Distribution
+
+Visualize the distribution of haplotypes for a specific SNP.
+
+```{r}
+plotHapCombDistribution(snp, SNPcombTables)
+```
+
+## Conclusion
+
+This document demonstrated the workflow for analyzing haplotype clusters and their impact on phenotypic traits using the `HaploTraitR` package. This approach can help researchers identify haplotype clusters with significant associations to phenotypic variation and may provide insights for plant breeding and genetic research.
+

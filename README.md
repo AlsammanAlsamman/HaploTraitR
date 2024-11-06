@@ -1,22 +1,23 @@
 # Haplotype Analysis Project
 
-This project performs haplotype analysis using the `HaploTraitR` library. The analysis involves clustering SNPs, computing LD matrices, and analyzing haplotype combinations.
+This project performs haplotype analysis and analyzing and visualizing phenotypic data across multiple genetic / haplotypes combinations 
+to understand the assocaition between haplotype (SNPs linked by LD) and variation in traits. 
 
-## Files
+## Sample Files
 
 - **Haplotype File:** `Barley_50K_KNNimp.hmp.txt`
 - **GWAS File:** `SignificantSNP_GWAS.csv`
 - **Phenotype File:** `Pheno_ANN19.tsv`
-- **Output Folder:** `haploLDOut`
 
-## Parameters
+
+## test Parameters
 
 - **Distance Threshold:** 1,000,000 (for clustering all SNPs within 1Mb of the significant SNPs)
 - **Cluster Count Threshold:** 5 (minimum number of SNPs in a cluster)
 - **LD Threshold:** 0.3 (minimum LD value to consider two SNPs in LD)
 - **Combination Frequency Threshold:** 0.1 (minimum genotypes with the same combination to consider the combination)
 
-## Steps
+## Example code Steps
 
 1. **Read GWAS Data:**
     ```r
@@ -89,7 +90,3 @@ This project performs haplotype analysis using the `HaploTraitR` library. The an
     ```r
     plotHapCombDistribution(snp, SNPcombTables)
     ```
-
-## Conclusion
-
-This project demonstrates the process of haplotype analysis using the `HaploTraitR` library, including clustering SNPs, computing LD matrices, and analyzing haplotype combinations. The results are saved in the specified output folder for further analysis.

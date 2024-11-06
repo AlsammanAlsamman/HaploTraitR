@@ -9,5 +9,6 @@ importFrom(ggplot2, theme_minimal)
 importFrom(ggplot2, theme)
 importFrom(ggplot2, element_text)
 importFrom(ggplot2, labs)
-
-
+importFrom(magrittr,"%>%")
+importFrom(rstatix,add_xy_position)
+importFrom(rstatix,t_test)

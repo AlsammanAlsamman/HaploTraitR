@@ -12,5 +12,7 @@ LazyData: true
 RoxygenNote: 7.3.2
 Imports: 
     igraph,
-    Rcpp (>= 1.0.3)
+    Rcpp (>= 1.0.3),
+    magrittr,
+    rstatix
 LinkingTo: Rcpp
