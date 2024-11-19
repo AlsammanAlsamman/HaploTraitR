@@ -6,61 +6,26 @@
 ########## Need to be more optimized
 getHapCombSamples<-function(haplotypes, hapmap)
 {
-  snpsnames<-names(haplotypes)
-  hap_comb_samples<-matrix(ncol= 4)
-  for(snpname in snpsnames)
+  # add column for haplotypes
+  haplotypes$samples<-NA
+  for(snp_cls_i in 1:nrow(haplotypes))
   {
-
-    chr<-haplotypes[[snpname]][1,]$chr
-    for(i in 1:nrow(haplotypes[[snpname]]))
+    snp_cls<-haplotypes[snp_cls_i,]
+    snp_cls_chr<-snp_cls$chr
+    snp_cls_combstr<-snp_cls$clusterComb
+    snp_cls_comb<-unlist(strsplit(as.character(snp_cls_combstr), "\\|"))
+    snp_cls_snps<-unlist(strsplit(as.character(snp_cls$snps), "\\|"))
+    snp_cls_data<-hapmap[[snp_cls_chr]][snp_cls_snps,]
+    for(i in 1:length(snp_cls_comb))
     {
-      combstr<-as.character(haplotypes[[snpname]][i,]$clusterComb)
-      comb<-unlist(strsplit(as.character(combstr), "\\|"))
-      snps<-unlist(strsplit(as.character(haplotypes[[snpname]][i,]$snps), "\\|"))
-      snpsdata<-hapmap[[chr]][snps,]
-      # replace values not exactly equal to comb value to NA
-      for(i in 1:length(comb))
-      {
-        snpvalue<-comb[i]
-        # in the i snp in data, replace all values not equal to comb[i] to NA
-        snpsdata[i,]<-ifelse(snpsdata[i,]!=snpvalue, NA, snpsdata[i,])
-      }
-      # remove columns with one or more NA
-      snpsdata<-snpsdata[,colSums(is.na(snpsdata))==0]
-      # get the samples
-      samples<-colnames(snpsdata)
-      samples<-paste(samples, collapse="|")
-      # create a vector of samples concatenated by |, snpname, and chr
-      # snpname, chr, pos, combstr, samples
-      hap_comb_samples<-rbind(hap_comb_samples, c(snpname, chr, combstr, samples))
+      snpvalue<-snp_cls_comb[i]
+      snp_cls_data[i,]<-ifelse(snp_cls_data[i,]!=snpvalue, NA, snp_cls_data[i,])
     }
-
+    snp_cls_data<-snp_cls_data[,colSums(is.na(snp_cls_data))==0]
+    samples<-colnames(snp_cls_data)
+    samples<-paste(samples, collapse="|")
+    # add samples to haplotypes
+    haplotypes[snp_cls_i,]$samples<-samples
   }
-  hap_comb_samples<-hap_comb_samples[-1,]
-  colnames(hap_comb_samples)<-c("snp", "chr", "comb", "samples")
-  return(hap_comb_samples)
+  return(haplotypes)
 }
-
-
-
-
-# combstr<-as.character(haplotypes[[snpname]][1,]$clusterComb)
-# comb<-unlist(strsplit(as.character(combstr), "\\|"))
-# snps<-unlist(strsplit(as.character(haplotypes[[snpname]][1,]$snps), "\\|"))
-# snpsdata<-hapmap[[chr]][snps,]
-# # replace values not exactly equal to comb value to NA
-# for(i in 1:length(comb))
-# {
-#   snpvalue<-comb[i]
-#   # in the i snp in data, replace all values not equal to comb[i] to NA
-#   snpsdata[i,]<-ifelse(snpsdata[i,]!=snpvalue, NA, snpsdata[i,])
-# }
-# # remove columns with one or more NA
-# snpsdata<-snpsdata[,colSums(is.na(snpsdata))==0]
-# # get the samples
-# samples<-colnames(snpsdata)
-# samples<-paste(samples, collapse="|")
-# # create a vector of samples concatenated by |, snpname, and chr
-# # snpname, chr, pos, combstr, samples
-# hap_comb_samples<-rbind(hap_comb_samples, c(snpname, chr, combstr, samples))
-

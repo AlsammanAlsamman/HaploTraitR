@@ -4,12 +4,12 @@
 \alias{getSNPcombTables}
 \title{Get SNP combinations sample tables}
 \usage{
-getSNPcombTables(haplotypes, hapmap)
+getSNPcombTables(haplotypes, pheno)
 }
 \arguments{
 \item{haplotypes}{A list of haplotype combinations}
 
-\item{hapmap}{A hapmap object}
+\item{pheno}{A phenotype data frame}
 }
 \value{
 A list of sample tables for each SNP combination

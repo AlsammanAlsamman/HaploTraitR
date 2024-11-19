@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "*.rmd": "markdown",
+        "*.Rmd": "rmd",
+        "algorithm": "c",
+        "stdio.h": "c",
+        "vcfparser.h": "c",
+        "stdlib.h": "c",
+        "distancefunctions.h": "c",
+        "popmanager.h": "c",
+        "genetic_distance.h": "c",
+        "matrix_manager.h": "c",
+        "pop_manager.h": "c",
+        "iostream": "cpp",
+        "define_global.h": "c",
+        "vcf_parser.h": "c",
+        "parameters.h": "c",
+        "joint_genotype.h": "c",
+        "joint_genotypes.h": "c",
+        "distance_matrix.h": "c",
+        "ostream": "cpp",
+        "new": "cpp"
+    }
+}

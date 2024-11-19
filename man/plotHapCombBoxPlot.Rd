@@ -4,14 +4,14 @@
 \alias{plotHapCombBoxPlot}
 \title{Plotting Haplotype Combination Boxplot for specific SNP}
 \usage{
-plotHapCombBoxPlot(snp, SNPcombTables, t_test_snpComp)
+plotHapCombBoxPlot(cls_snp, SNPcombTables, t_test_snpComp, with_dots = TRUE)
 }
 \arguments{
-\item{snp}{The SNP of interest}
-
 \item{SNPcombTables}{A list of data frames containing haplotype combinations and phenotype values}
 
 \item{t_test_snpComp}{A list of t-test results for haplotype combinations}
+
+\item{snp}{The SNP of interest}
 }
 \description{
 Plotting Haplotype Combination Boxplot for specific SNP

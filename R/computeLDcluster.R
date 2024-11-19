@@ -18,7 +18,7 @@ computeLDclusterByChr<-function(hapmap, haplotype_clusters, chr, cls, outfolder)
   rownames(ld_matrix)<-cluster.snps
   colnames(ld_matrix)<-cluster.snps
   # save the LD matrix
-  ld_matrix_file<-file.path(outfolder, paste(chr, cls, "ld_matrix.csv", sep="_"))
+  ld_matrix_file<-file.path(outfolder, paste(cls, "ld_matrix.csv", sep="_"))
   write.csv(ld_matrix, ld_matrix_file)
 }
 
@@ -26,15 +26,21 @@ computeLDclusterByChr<-function(hapmap, haplotype_clusters, chr, cls, outfolder)
 #' Compute LD matrix for a clusters
 #' @param hapmap a hapmap object containing the genotypic data
 #' @param haplotype_clusters a list of haplotype clusters
+#' @param outfolder the output folder
 #' @return a folder containing the LD matrices
 #' @export
 
-computeLDclusters<-function(hapmap, haplotype_clusters)
+computeLDclusters<-function(hapmap, haplotype_clusters, outfolder)
 {
   # create a temporary folder to store LD matrices
-  tempdir<-tempdir()
+  if(is.null(outfolder))
+  {
+    outfolder<-tempdir()
+    print("A temporary folder will be created to store the LD matrices")
+  }
+
   # create a folder to store the LD matrices
-  ld_folder<-file.path(tempdir, "LD_matrices")
+  ld_folder<-file.path(outfolder, "LD_matrices")
   dir.create(ld_folder, showWarnings = FALSE)
   out_info<-list()
   for(chr in names(haplotype_clusters))

@@ -4,39 +4,37 @@
 #' @importFrom rstatix t_test
 #' @importFrom rstatix add_xy_position
 #' @importFrom dplyr mutate
-#' @importFrom magrittr %>%
 #' @export
 testSNPcombs <- function(comb_sample_Tables) {
-  snps <- names(comb_sample_Tables)
-  hap_comb_tests <- list()
-  snpadded<-c()
-  for (snp in snps) {
-    # Initialize comb_sample as a data frame with specified column types
-    comb_sample <- comb_sample_Tables[[snp]]
-    # Convert "Comb" to factor
-    comb_sample$Comb <- factor(comb_sample$Comb)
+  snp_clss<-unique(comb_sample_Tables$SNP)
+  snp_test_results<-list()
+  snp_cls_names<-c()
+  for (snp_cls in snp_clss)
+  {
+    pheno_data<-comb_sample_Tables[comb_sample_Tables$SNP==snp_cls,]
+    pheno_data$comb<-as.factor(pheno_data$comb)
     # Perform statistical test if there are enough samples
     tryCatch({
       # Ensure there are at least two levels in "Comb" and sufficient data for testing
-      if (length(unique(comb_sample$Comb)) > 1 && nrow(comb_sample) > 2) {
-        stat.test <- t_test(comb_sample, Pheno ~ Comb)
+      if (length(unique(pheno_data$comb)) > 1 && nrow(pheno_data) > 2) {
+        stat.test <- t_test(pheno_data, Pheno ~ comb)
         stat.test <-  add_xy_position(stat.test, x = "Pheno")
         # Set xmin and xmax based on the group1 and group2 column values
         stat.test <-
-          mutate(stat.test, xmin = as.numeric(factor(group1, levels = levels(comb_sample$Comb))),
-                 xmax = as.numeric(factor(group2, levels = levels(comb_sample$Comb))))
-        stat.test$snp <- snp
+          mutate(stat.test, xmin = as.numeric(factor(group1, levels = levels(pheno_data$comb))),
+                 xmax = as.numeric(factor(group2, levels = levels(pheno_data$comb))))
+        stat.test$snp <- snp_cls
         if (nrow(stat.test) > 0) {
-          hap_comb_tests <- append(hap_comb_tests, list(stat.test))
-          snpadded<-append(snpadded, snp)
+          snp_test_results <- append(snp_test_results, list(stat.test))
+          snp_cls_name<-snp_cls
+          snp_cls_names<-append(snp_cls_names, snp_cls_name)
         }
       }
     }, error = function(e) {
-      message(paste("Error in SNP", snp, ": ", e$message))
-
+      message(paste("Error in SNP", snp_cls, ": ", e$message))
     })
   }
-
-  names(hap_comb_tests) <- snpadded
-  return(hap_comb_tests)
+  # check that the names are correct
+  names(snp_test_results) <- snp_cls_names
+  return(snp_test_results)
 }

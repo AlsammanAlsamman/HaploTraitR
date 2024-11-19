@@ -3,7 +3,7 @@
 #' @param ld_threshold The minimum LD value to consider two SNPs in LD
 #' @importFrom igraph graph_from_adjacency_matrix
 #' @return LD cluster information
-clusterLD<-function(LDsInfo, ld_threshold,cls_count=3)
+getLDclusters<-function(LDsInfo, ld_threshold,cls_count=3)
 {
   out_info<-LDsInfo$out_info
   ld_folder<-LDsInfo$ld_folder
@@ -12,7 +12,7 @@ clusterLD<-function(LDsInfo, ld_threshold,cls_count=3)
   {
     chr<-out_info[i,][1]
     cls<-out_info[i,][2]
-    ld_matrix<-read.csv(file.path(ld_folder, paste(chr, cls, "ld_matrix.csv", sep="_")), row.names=1)
+    ld_matrix<-read.csv(file.path(ld_folder, paste(cls, "ld_matrix.csv", sep="_")), row.names=1)
     ld_matrix<-as.matrix(ld_matrix)
     colnames(ld_matrix)<-rownames(ld_matrix)
     snps<-rownames(ld_matrix)
@@ -35,6 +35,16 @@ clusterLD<-function(LDsInfo, ld_threshold,cls_count=3)
     cluster_membership<-cluster_membership[cluster_membership$cluster %in% names(cluster_count)[cluster_count>=cls_count],]
     cluster_info[[length(cluster_info)+1]]<-cluster_membership
   }
-  names(cluster_info)<-paste(out_info[,1], out_info[,2], sep="_")
+  #names(cluster_info)<-paste(out_info[,1], out_info[,2], sep="_")
+  names(cluster_info)<-out_info[,2]
+  # delete clusters where the significant snp is not there
+  for(i in 1:length(cluster_info))
+  {
+    main_snp <-names(cluster_info)
+    # which cluster is the main snp is
+    main_snp_cluster<-cluster_info[[i]][cluster_info[[i]]$SNP==main_snp[i],]$cluster
+    # remove all clusters where the main snp is not there
+    cluster_info[[i]]<-cluster_info[[i]][cluster_info[[i]]$cluster==main_snp_cluster,]$SNP
+  }
   return(cluster_info)
 }

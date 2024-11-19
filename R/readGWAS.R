@@ -9,7 +9,9 @@
 readGWAS<-function(gwasfile,header=TRUE,sep="\t")
 {
   gwas<-read.csv(gwasfile,header=header,sep=sep)
-  colnames(gwas)<-c("rs","chr","pos","p")
+  colnames(gwas)<-c("rsid","chr","pos","p")
+  # add rs id
+  gwas$rs<-paste(gwas$chr, gwas$pos, sep=":")
   # split by chr
   gwas<-split(gwas, gwas$chr)
   return(gwas)

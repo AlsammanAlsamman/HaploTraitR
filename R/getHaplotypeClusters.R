@@ -1,12 +1,12 @@
-#' Get haplotype clusters from GWAS and hapmap data By chromosome
+#' Get Distance clusters from GWAS and hapmap data By chromosome
 #' @param gwas A list of GWAS data frames split by chromosome
 #' @param hapmap A list of hapmap data frames split by chromosome
 #' @param chromosome The chromosome of interest
 #' @param dist_threshold The maximum distance between SNPs to consider for clustering
 #' @param dist_cluster_count The minimum number of SNPs required to form a cluster
-#' @return A list of haplotype clusters
+#' @return A list of Dist clusters
 
-getHaplotypeClustersByChr <- function(gwas, hapmap, chromosome, dist_threshold, dist_cluster_count) {
+getDistClustersByChr <- function(gwas, hapmap, chromosome, dist_threshold, dist_cluster_count) {
   # Select chromosome-specific data from GWAS and hapmap
   gwas_chr <- gwas[[chromosome]]
   hapmap_chr <- hapmap[[chromosome]]
@@ -43,18 +43,18 @@ getHaplotypeClustersByChr <- function(gwas, hapmap, chromosome, dist_threshold, 
 #' @return A list of haplotype clusters
 #' @export
 
-getHaplotypeClusters <- function(gwas, hapmap, dist_threshold, dist_cluster_count) {
+getDistClusters <- function(gwas, hapmap, dist_threshold, dist_cluster_count) {
   # Initialize an empty list to store haplotype clusters
-  haplotype_clusters <- list()
+  dist_clusters <- list()
   # Iterate over chromosomes
   for (chromosome in names(gwas)) {
     # Get haplotype clusters for the current chromosome
-    clusters <- getHaplotypeClustersByChr(gwas, hapmap, chromosome, dist_threshold, dist_cluster_count)
+    clusters <- getDistClustersByChr(gwas, hapmap, chromosome, dist_threshold, dist_cluster_count)
     # Add the clusters to the list
     if (!is.null(clusters)) {
-      haplotype_clusters[[chromosome]] <- clusters
+      dist_clusters[[chromosome]] <- clusters
     }
   }
   # Return the list of haplotype clusters
-  return(haplotype_clusters)
+  return(dist_clusters)
 }

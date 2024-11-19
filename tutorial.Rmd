@@ -50,6 +50,8 @@ First, load the GWAS data to identify significant SNPs for clustering.
 ```{r}
 gwas <- readGWAS(gwasfile, sep = "\t")
 head(gwas)
+
+
 ```
 
 ### Load Haplotype Data
@@ -125,6 +127,8 @@ SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
 Perform statistical testing on SNP combinations to see if there are significant associations with phenotypes.
 
 ```{r}
+#library(magrittr)
+#library(rstatix)
 t_test_snpComp <- testSNPcombs(SNPcombTables)
 ```
 
@@ -136,7 +140,7 @@ Select an SNP and create a boxplot to compare phenotypic values among different 
 
 ```{r}
 #library(ggplot2)
-#library(ggpubr)
+library(ggpubr)
 snp <- "2H_JHI-Hv50k-2016-79696"
 plotHapCombBoxPlot(snp, SNPcombTables, t_test_snpComp)
 ggplot2::ggsave(file.path(outfolder, paste0(snp, "_boxplot.png")), width = 8, height = 6)
@@ -154,4 +158,3 @@ ggplot2::ggsave(file.path(outfolder, paste0(snp, "_distribution.png")), width = 
 ## Conclusion
 
 This document demonstrated the workflow for analyzing haplotype clusters and their impact on phenotypic traits using the `HaploTraitR` package. This approach can help researchers identify haplotype clusters with significant associations to phenotypic variation and may provide insights for plant breeding and genetic research.
-
