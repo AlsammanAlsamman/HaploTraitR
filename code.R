@@ -2,10 +2,10 @@ rm(list = ls())
 library(HaploTraitR)
 
 # Define file paths and output folder
-hapfile <- "sampledata/Barley_50K_KNNimp.hmp.txt"
-gwasfile <- "sampledata/SignificantSNP_GWAS.tsv"
-phenofile <- "sampledata/Pheno_ANN19.tsv"
-outfolder <- "sampleout"
+hapfile <- "/home/samman/Documents/MyGitHub/HaploTraitR/sampledata/Barley_50K_KNNimp.hmp.txt"
+gwasfile <- "/home/samman/Documents/MyGitHub/HaploTraitR/sampledata/SignificantSNP_GWAS.tsv"
+phenofile <- "/home/samman/Documents/MyGitHub/HaploTraitR/sampledata/Pheno_ANN19.tsv"
+outfolder <- "/home/samman/Documents/MyGitHub/HaploTraitR/outfolder"
 
 #Set thresholds for distance, clustering, LD, and combination frequency.
 
