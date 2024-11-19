@@ -26,5 +26,6 @@ importFrom(reshape2, melt)
 importFrom(snplinkage,gtable_ld)
 importFrom(ggplot2, position_jitter)
 importFrom(ggplot2, geom_tile)
+importFrom(ggplot2, element_blank)
 importFrom(ggplot2, geom_boxplot)
 
