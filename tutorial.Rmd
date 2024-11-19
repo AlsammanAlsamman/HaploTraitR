@@ -50,8 +50,6 @@ First, load the GWAS data to identify significant SNPs for clustering.
 ```{r}
 gwas <- readGWAS(gwasfile, sep = "\t")
 head(gwas)
-
-
 ```
 
 ### Load Haplotype Data
@@ -67,7 +65,7 @@ hapmap <- readHapmap(hapfile)
 Cluster SNPs within the specified distance threshold around significant SNPs from the GWAS data.
 
 ```{r}
-haplotype_clusters <- getHaplotypeClusters(gwas, hapmap, dist_threshold, dist_cluster_count)
+dist_clusters <- getDistClusters(gwas, hapmap, dist_threshold, dist_cluster_count)
 ```
 
 ## Step 3: Compute LD Matrices
@@ -75,7 +73,7 @@ haplotype_clusters <- getHaplotypeClusters(gwas, hapmap, dist_threshold, dist_cl
 Calculate linkage disequilibrium (LD) values for each SNP cluster.
 
 ```{r}
-LDsInfo <- computeLDclusters(hapmap, haplotype_clusters)
+LDsInfo <- computeLDclusters(hapmap, dist_clusters, outfolder)
 ```
 
 ## Step 4: Save LD Matrices
@@ -91,7 +89,7 @@ saveLDs2folder(LDsInfo, outfolder)
 Cluster SNPs based on LD values and apply frequency thresholding to derive haplotypes.
 
 ```{r}
-clusterLDs <- clusterLD(LDsInfo, ld_threshold, cls_count = 3)
+clusterLDs <- getLDclusters(LDsInfo,ld_threshold, cls_count = 3)
 haplotypes <- convertLDclusters2Haps(hapmap, clusterLDs, comb_freq_threshold)
 ```
 
@@ -127,9 +125,7 @@ SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
 Perform statistical testing on SNP combinations to see if there are significant associations with phenotypes.
 
 ```{r}
-#library(magrittr)
-#library(rstatix)
-t_test_snpComp <- testSNPcombs(SNPcombTables)
+t_test_snpComp <-  testSNPcombs(SNPcombTables)
 ```
 
 ## Step 10: Visualize Results
@@ -139,11 +135,13 @@ t_test_snpComp <- testSNPcombs(SNPcombTables)
 Select an SNP and create a boxplot to compare phenotypic values among different haplotype combinations.
 
 ```{r}
-#library(ggplot2)
-library(ggpubr)
-snp <- "2H_JHI-Hv50k-2016-79696"
-plotHapCombBoxPlot(snp, SNPcombTables, t_test_snpComp)
-ggplot2::ggsave(file.path(outfolder, paste0(snp, "_boxplot.png")), width = 8, height = 6)
+
+for (cls_snp in names(t_test_snpComp)) {
+       plotHapCombBoxPlot(cls_snp, SNPcombTables, t_test_snpComp)
+       ggplot2::ggsave(file.path(outfolder, paste0(cls_snp, "_boxplot.png")), width = 8, height = 6)
+}
+
+
 ```
 
 ### Plot Haplotype Distribution
@@ -151,10 +149,13 @@ ggplot2::ggsave(file.path(outfolder, paste0(snp, "_boxplot.png")), width = 8, he
 Visualize the distribution of haplotypes for a specific SNP.
 
 ```{r}
-plotHapCombDistribution(snp, SNPcombTables)
-ggplot2::ggsave(file.path(outfolder, paste0(snp, "_distribution.png")), width = 8, height = 6)
+lDplots<-plotLDForClusters(ld_matrix_folder=LDsInfo[[1]], clusterLDs, outfolder=outfolder)
 ```
 
-## Conclusion
+### Plot LD Combination Matrix with LD
+```{r}
 
-This document demonstrated the workflow for analyzing haplotype clusters and their impact on phenotypic traits using the `HaploTraitR` package. This approach can help researchers identify haplotype clusters with significant associations to phenotypic variation and may provide insights for plant breeding and genetic research.
+LDCombs<-plotLDCombMatrix(LDsInfo[[1]], clusterLDs, haplotypes, gwas, outfolder=outfolder)
+
+```
+

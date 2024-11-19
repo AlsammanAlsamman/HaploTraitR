@@ -27,5 +27,19 @@ getHapCombSamples<-function(haplotypes, hapmap)
     # add samples to haplotypes
     haplotypes[snp_cls_i,]$samples<-samples
   }
+  # add combination 0, which is the samples that do not have any of the haplotypes for the snps clusters
+  snp_clss<-unique(haplotypes$snp)
+  hap_samples <- colnames(hapmap[[1]])[12:ncol(hapmap[[1]])]
+
+  for (snp_cls in snp_clss)
+  {
+    chr<-strsplit(snp_cls, ":")[[1]][1]
+    allsamples<-unique(unlist(strsplit(haplotypes[haplotypes$snp==snp_cls,]$samples, "\\|")))
+    total_comp_freq<-sum(haplotypes[haplotypes$snp==snp_cls,]$freq)
+    no_comb_samples<-setdiff(hap_samples, allsamples)
+    no_comb_samples<-paste(no_comb_samples, collapse="|")
+    # add samples to haplotypes
+    haplotypes<-rbind(haplotypes, data.frame(clusterComb="None", Freq=1-total_comp_freq, chr=chr, snps="",snp=snp_cls, comb="0", samples=no_comb_samples))
+  }
   return(haplotypes)
 }

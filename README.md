@@ -29,8 +29,8 @@ devtools::install_github("AlsammanAlsamman/HaploTraitR")
 Please use the tutorial provided in the `tutorial.Rmd` file for detailed instructions on using the `HaploTraitR` package.
 
 # Example
-![image](sampleout/2H_JHI-Hv50k-2016-79696_boxplot.png)
-![image](sampleout/2H_JHI-Hv50k-2016-79696_distribution.png)
+![image](out_example/7H:501592821_boxplot.png)
+![image](out_example/7H:501592821_boxplot.png)
 
 
 

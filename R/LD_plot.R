@@ -182,6 +182,7 @@ plotCombMatrix<-function(cluster_id, haplotypes, gwas, snps=NULL, outfolder = NU
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 scale_x_discrete
 #' @importFrom ggplot2 theme
+#' @importFrom gridExtra arrangeGrob
 #' @importFrom ggplot2 theme_minimal
 #' @export
 

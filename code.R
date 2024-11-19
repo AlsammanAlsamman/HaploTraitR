@@ -25,7 +25,7 @@ hapmap <- readHapmap(hapfile)
 #Cluster SNPs within the specified distance threshold around significant SNPs from the GWAS data.
 
 dist_clusters <- getDistClusters(gwas, hapmap, dist_threshold, dist_cluster_count)
-
+dist_clusters
 
 ############ Its beeter to select the cluster that have the significant SNP and remove others
 
@@ -57,8 +57,10 @@ haplotypes <- convertLDclusters2Haps(hapmap, clusterLDs, comb_freq_threshold)
 
 #Extract the haplotype combinations for samples and save to a CSV file.
 snpcombsample <- getHapCombSamples(haplotypes, hapmap)
-
-
+snpcombsample
+ncol(snpcombsample)
+colnames(snpcombsample)
+haplotypes
 ############# Working updating
 #write.csv(snpcombsample, file = file.path(outfolder, "haplotype_combinations.csv"), row.names = FALSE)
 
@@ -105,5 +107,3 @@ plotLDCombMatrix(LDsInfo[[1]], clusterLDs, haplotypes, gwas, outfolder=outfolder
 
 
 lDplots<-plotLDForClusters(ld_matrix_folder=LDsInfo[[1]], clusterLDs, outfolder=outfolder)
-
-
