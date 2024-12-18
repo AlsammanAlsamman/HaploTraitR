@@ -77,6 +77,22 @@ pheno <- read.csv(phenofile, header = TRUE, sep = "\t")
 
 SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
 
+
+# only for the documentation
+# plot the haplotypes as boxplot
+library(ggplot2)
+library(ggpubr)
+# Sample    Pheno                                                                         ldcls comb         SNP
+# 1     G2 70.56720 CC|TT|AA|TT|GG|AA|GG|AA|AA|GG|TT|AA|CC|AA|GG|GG|AA|AA|TT|GG|CC|CC|AA|GG|AA|CC    1 2H:48081081
+# 2    G17 78.18191 CC|TT|AA|TT|GG|AA|GG|AA|AA|GG|TT|AA|CC|AA|GG|GG|AA|AA|TT|GG|CC|CC|AA|GG|AA|CC    1 2H:48081081
+# 3    G25 80.10286 CC|TT|AA|TT|GG|AA|GG|AA|AA|GG|TT|AA|CC|AA|GG|GG|AA|AA|TT|GG|CC|CC|AA|GG|AA|CC    1 2H:48081081
+# 4    G26 66.19045 CC|TT|AA|TT|GG|AA|GG|AA|AA|GG|TT|AA|CC|AA|GG|GG|AA|AA|TT|GG|CC|CC|AA|GG|AA|CC    1 2H:48081081
+# 5    G33 84.09275 CC|TT|AA|TT|GG|AA|GG|AA|AA|GG|TT|AA|CC|AA|GG|GG|AA|AA|TT|GG|CC|CC|AA|GG|AA|CC    1 2H:48081081
+# 6    G36 78.57061 CC|TT|AA|TT|GG|AA|GG|AA|AA|GG|TT|AA|CC|AA|GG|GG|AA|AA|TT|GG|CC|CC|AA|GG|AA|CC    1 2H:48081081
+
+
+
+
 ## Step 9: Perform t-tests on SNP Combinations
 
 #Perform statistical testing on SNP combinations to see if there are significant associations with phenotypes.
@@ -86,6 +102,23 @@ SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
 #library(rstatix)
 
 t_test_snpComp <-  testSNPcombs(SNPcombTables)
+t_test_snpComp
+
+
+library(ggplot2)
+library(ggpubr)
+ggplot(SNPcombTables, aes(x = comb, y = Pheno)) +
+  geom_violin(aes(fill = comb), alpha = 0.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = paste("Phenotype Distribution by Haplotype Combination for SNP", "2H:48081081"),
+       x = "Haplotype Combination",
+       y = "Phenotype Value") +
+  theme(legend.position = "none")+
+  facet_wrap(~SNP)
+
+# compare shared genotypes between the haplotypes
+
+
 
 ## Step 10: Visualize Results
 

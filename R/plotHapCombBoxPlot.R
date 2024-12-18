@@ -12,7 +12,7 @@
 #' @importFrom ggplot2 geom_point
 #' @import ggpubr
 #' @export
-plotHapCombBoxPlot <- function(cls_snp = NULL, SNPcombTables, t_test_snpComp, with_dots = TRUE, outfolder) {
+plotHapCombBoxPlot <- function(cls_snp = NULL, SNPcombTables, t_test_snpComp, with_dots = TRUE, outfolder="") {
   if(is.null(cls_snp)){
     for (i in names(t_test_snpComp)) {
       comb_sample <- SNPcombTables[SNPcombTables$SNP == i, ]
@@ -24,17 +24,20 @@ plotHapCombBoxPlot <- function(cls_snp = NULL, SNPcombTables, t_test_snpComp, wi
              x = "Haplotype Combination",
              y = "Phenotype Value") +
         theme(legend.position = "none")
-    
+
       if (with_dots) {
         p <- p + geom_point(aes(x = comb, y = Pheno, color=Pheno), position = position_jitter(width = 0.1), alpha = 0.5)
       }
-    
+
       if ("p.adj.signif" %in% colnames(t_test_snpComp[[i]])) {
         p <- p + stat_pvalue_manual(t_test_snpComp[[i]], label = "p.adj.signif", tip.length = 0.01)
       }
-    
-      p
-      ggplot2::ggsave(file.path(outfolder, paste0(i, "_boxplot.png")), width = 8, height = 6)
+
+
+      if (length(outfolder) > 0) {
+        ggplot2::ggsave(file.path(outfolder, paste0(i, "_boxplot.png")), width = 8, height = 6)
+      }
+      return(p)
     }
   }else{
     comb_sample <- SNPcombTables[SNPcombTables$SNP == cls_snp, ]
@@ -46,17 +49,20 @@ plotHapCombBoxPlot <- function(cls_snp = NULL, SNPcombTables, t_test_snpComp, wi
            x = "Haplotype Combination",
            y = "Phenotype Value") +
       theme(legend.position = "none")
-  
+
     if (with_dots) {
       p <- p + geom_point(aes(x = comb, y = Pheno, color=Pheno), position = position_jitter(width = 0.1), alpha = 0.5)
     }
-  
+
     if ("p.adj.signif" %in% colnames(t_test_snpComp[[cls_snp]])) {
       p <- p + stat_pvalue_manual(t_test_snpComp[[cls_snp]], label = "p.adj.signif", tip.length = 0.01)
     }
-  
-  p
-  ggplot2::ggsave(file.path(outfolder, paste0(cls_snp, "_boxplot.png")), width = 8, height = 6)
+
+
+    if (length(outfolder) > 0) {
+    ggplot2::ggsave(file.path(outfolder, paste0(cls_snp, "_boxplot.png")), width = 8, height = 6)
+  }
+    return(p)
   }
 }
 

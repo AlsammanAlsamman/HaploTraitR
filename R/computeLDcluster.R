@@ -40,6 +40,11 @@ computeLDclusters<-function(hapmap, haplotype_clusters, outfolder)
   }
 
   # create a folder to store the LD matrices
+  # create the output folder if it does not exist
+  if(!dir.exists(outfolder))
+  {
+    dir.create(outfolder, showWarnings = FALSE)
+  }
   ld_folder<-file.path(outfolder, "LD_matrices")
   dir.create(ld_folder, showWarnings = FALSE)
   out_info<-list()
@@ -58,29 +63,3 @@ computeLDclusters<-function(hapmap, haplotype_clusters, outfolder)
   names(out_list)<-c("ld_folder", "out_info")
   return(out_list)
 }
-
-# # lets take only one cluster in chromosome 7
-# chr<-"7H"
-# cls<-15
-#
-#
-# # create a temporary folder to store LD matrices
-# tempdir<-tempdir()
-# # create a folder to store the LD matrices
-# ld_folder<-file.path(outfolder, "LD_matrices")
-# dir.create(ld_folder, showWarnings = FALSE)
-#
-# geno_cluster<-haplotype_clusters[[chr]][[cls]]
-# # lets extract the gentypic data of this cluster
-# geno_cluster_data<-hapmap[[chr]][paste(chr, geno_cluster, sep=":"),]
-# # get the snps
-# cluster.snps<-rownames(geno_cluster_data)
-# # convert the data to numeric
-# geno_cluster_data_numeric<-convertGenoBi2Numeric(hapcluster15.data)
-# # calculate the LD matrix
-# ld_matrix <- calculate_ld_matrix(geno_cluster_data_numeric)
-# rownames(ld_matrix)<-cluster.snps
-# colnames(ld_matrix)<-cluster.snps
-# # save the LD matrix
-# ld_matrix_file<-file.path(ld_folder, paste(chr, cls, "ld_matrix.csv", sep="_"))
-# write.csv(ld_matrix, ld_matrix_file)

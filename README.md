@@ -31,12 +31,3 @@ Please use the tutorial provided in the `tutorial.Rmd` file for detailed instruc
 # Example
 ![image](out_example/7H:501592821_boxplot.png)
 ![image](out_example/7H:501592821_ld_comb_matrix.png)
-
-
-
-
-
-
-
-
-

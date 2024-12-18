@@ -39,33 +39,3 @@ convertLDclusters2Haps<-function(hapmap, clusterLDs, comb_freq_threshold)
   #names(hap_comb)<-names(clusterLDs)
   return(hap_comb)
 }
-
-
-# clusters<-unique(clusterLDs[[i]]$cluster)
-# for (cls in clusters)
-# {
-#   cluster<-clusterLDs[[i]][clusterLDs[[i]]$cluster==cls,]
-#   # get the chromosome
-#   chr<-strsplit(cluster[[1]][1], ":")[[1]][1]
-#   # select the data of these snps
-#   cluster.data<-hapmap[[chr]][cluster$SNP,]
-#   # remove all non variant columns first 11 columns
-#   cluster.data<-cluster.data[,-c(1:11)]
-#   # transpose the data
-#   cluster.data<-t(cluster.data)
-#   # concatenate the data in one column
-#   clusterComb<-apply(cluster.data, 1, paste, collapse="|")
-#   # calculate the frequency of each combination
-#   snpsComb<-as.data.frame(table(clusterComb))
-#   totalsample<-sum(snpsComb$Freq)
-#   snpsComb$Freq<-snpsComb$Freq/totalsample
-#   snpsComb$snps<-paste(cluster$SNP, collapse="|")
-#   snpsComb$chr<-chr
-#   snpsComb$cluster<-cls
-#   snpsComb$snp<-names(clusterLDs)[i]
-#   # remove rows with frequency less than comb_freq_threshold
-#   snpsComb<-snpsComb[snpsComb$Freq>comb_freq_threshold,]
-#   snpsComb$comb<-1:nrow(snpsComb)
-#   # append to hap_comb
-#   hap_comb[[length(hap_comb)+1]]<-snpsComb
-# }

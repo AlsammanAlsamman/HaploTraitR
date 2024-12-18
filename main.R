@@ -1,102 +1,177 @@
-haplotype_clusters
-LDsInfo
 
-# read one cluster
-ld_folder<-LDsInfo$ld_folder
-i<-1
-out_info<-LDsInfo$out_info
-chr<-out_info[i,][1]
-cls<-out_info[i,][2]
-ld_matrix<-read.csv(file.path(ld_folder, paste(chr, cls, "ld_matrix.csv", sep="_")), row.names=1)
-getwd()
-write.csv(ld_matrix, "ld_matrix.csv")
+library(HaploTraitR)
 
-# plot the LD matrix
-library(ggplot2)
+
+# Define file paths and output folder
+hapfile <- "sampledata/Barley_50K_KNNimp.hmp.txt"
+gwasfile <- "sampledata/SignificantSNP_GWAS.tsv"
+phenofile <- "sampledata/Pheno_ANN19.tsv"
+outfolder <- "sampleout"
+
+### Setting Thresholds
+
+dist_threshold <- 1000000 # Distance threshold (1Mb)
+dist_cluster_count <- 5   # Minimum SNPs in a cluster
+ld_threshold <- 0.3       # Minimum LD value
+comb_freq_threshold <- 0.1 # Minimum genotype frequency for a combination
+
+
+## Step 1: Reading Data Files
+
+gwas <- readGWAS(gwasfile, sep = "\t")
+head(gwas)
+
+hapmap <- readHapmap(hapfile)
+
+
+## New addition
+pheno <- read.csv(phenofile, header = TRUE, sep = "\t")
+head(pheno)
+
+
+# select sig SNPs
+subhapmap <- list()
+for (i in 1:length(gwas)) {
+  chr <- names(gwas)[i]
+  sigSNPs <- gwas[[i]]$rs
+  subhapmap[[i]] <- hapmap[[chr]][sigSNPs,]
+}
+# rbinding the hapmap
+subhapmap <- do.call(rbind, subhapmap)
+# remove the first 11 columns
+subhapmap[,1:11]<-NULL
+# transpose the data
+subhapmap<-t(subhapmap)
+snps_target<-colnames(subhapmap)
+# merge the pheno data with the hapmap
+geno_pheno<-merge(subhapmap, pheno, by.x="row.names", by.y="Taxa")
+# transfere row.names to the first column
+rownames(geno_pheno)<-geno_pheno[,1]
+geno_pheno<-geno_pheno[,-1]
+#melting the data and using the SNP and Taxa as the id variables
 library(reshape2)
+Trait_name<-"PH"
 
-ld_matrix_mod<-ld_matrix
-# remove upper triangle
-ld_matrix_mod[upper.tri(ld_matrix_mod)]<-0
-# metl to cr
-# conver the matrix to a long format
-ld_matrix_melt<-as.matrix(ld_matrix)
-colnames(ld_matrix_melt)<-rownames(ld_matrix)
-# melt the matrix to be row and column, and value
-ld_matrix_melt<-melt(ld_matrix_melt)
-colnames(ld_matrix_melt)<-c("snp1", "snp2", "value")
-# add columns for sig_1 and sig_2
-ld_matrix_melt$sig_1<-"black"
-ld_matrix_melt$sig_2<-"black"
-# if snp1 in gwas rsids, change sig_1 to red
-ld_matrix_melt$sig_1[ld_matrix_melt$snp1 %in% gwas$rsid]<-"red"
-# if snp2 in gwas rsids, change sig_2 to red
-ld_matrix_melt$sig_2[ld_matrix_melt$snp2 %in% gwas$rsid]<-"red"
-ld_matrix_melt$value<-as.numeric(ld_matrix_melt$value)
-# plot the matrix
-ggplot(ld_matrix_melt, aes(x=snp1, y=snp2, fill=value))+
-  geom_tile()+
-  scale_fill_gradient(low="white", high="blue")+
-  geom_text(aes(label=round(value, 2)), size=3)+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-  scale_color_manual(values=c("black", "red"))+
-  theme(legend.position = "none")+
-  geom_tile(aes(color=sig_1))+
-  geom_tile(aes(color=sig_2))
+
+geno_pheno_melt<-melt(geno_pheno, id.vars=c(Trait_name))
 
 
 
 
-
-
-snps<-rownames(ld_matrix)
-snps.pos<-as.numeric(gsub(".*:", "", snps))
-# convert to scale from 0 to 1
-snps.pos<-(snps.pos-min(snps.pos))/(max(snps.pos)-min(snps.pos))
-snps.labels<-snps
-# create a data frame for the snps
-snps.data<-data.frame(x=snps.pos, y=rep(1, length(snps.pos)), label=snps.labels)
-snps.data
-# create aggplot line and add the snps as ticks and text
+#################################
 library(ggplot2)
-library(ggrepel)
+library(ggpubr)  # For statistical annotations
+library(rstatix)
+
+# Assuming `geno_pheno_melt` is the data frame and `snps_target` contains SNPs to plot
+head(geno_pheno_melt)
+
+# Extract unique SNP values
+snp_var <- unique(geno_pheno_melt$value)
+
+# Generate consistent colors for SNP values
+snp_colors <- rainbow(length(snp_var))
+names(snp_colors) <- snp_var  # Assign names for consistent mapping
+
+# Loop through the SNP targets
+for (snp in snps_target) {
+  # Subset data for the SNP
+  sub_data <- geno_pheno_melt[geno_pheno_melt$variable %in% snp, ]
+  colnames(sub_data) <- c("Trait", "snp_var", "value")
+  sub_data$value <- as.factor(sub_data$value)
+  # remove the NN values
+  sub_data<-sub_data[!sub_data$value=="NN",]
+  stat.test <- NULL
+  # Perform the t-test using compare_means()
+  tryCatch({
+    stat.test <- compare_means(
+      formula = Trait ~ value,  # Define the formula for comparison
+      data = sub_data,          # Use the subset data
+      method = "t.test"         # Specify Welch Two Sample t-test
+    )
+    # Add y.position for annotations
+    stat.test <- stat.test %>%
+      mutate(y.position = max(sub_data$Trait) + 1)  # Position above the boxplot
+  }, error = function(e) {
+    print(paste("Error in", snp, ":", e))
+  })
+
+  # Create the boxplot with annotations
+  p <- ggplot(sub_data, aes(x = value, y = Trait)) +
+    geom_violin(aes(fill = value, alpha = 0.01)) +
+    geom_jitter(width = 0.2, alpha = 0.3) +
+    scale_fill_manual(values = snp_colors)+
+    # no legend
+    theme(legend.position = "none")+
+    # labs title
+    labs(title = paste("Phenotype Distribution by SNP", snp),
+         x = "Haplotype Combination",
+         y = "Phenotype Value")
+  if (!is.null(stat.test)) {
+    p<- p + stat_pvalue_manual(stat.test[1, ], label = "p.signif", tip.length = 0.01)
+  }
+  ggsave(paste0(snp, "_boxplot.png"), plot = p, path = outfolder, width = 6, height = 6)
+}
 
 
-library(ggplot2)
-library(ggrepel)
 
-ggplot() +
-  # Add points to the plot
-  geom_point(data = snps.data, aes(x = x, y = y), color = "black") +
-  # Add vertical annotation labels with `geom_label_repel`
-  geom_label_repel(
-    data = snps.data,
-    aes(x = x, y = y, label = label),
-    size = 2,
 
-    point.padding = 0.5,
-#    force = 100,
-    segment.size = 0.2,
-    segment.color = "grey50",
-    direction = "y",    # Align labels vertically above points
-    angle = 90,         # Rotate text vertically
-    nudge_y = 0.1,       # Offset labels slightly above points
-    # dashed line
-segment.inflect = TRUE,
-hjust             = 0,
-segment.curvature = -0.2,
-force             = 0.5
 
-  ) +
-  # Clean up background, y-axis labels, and ticks
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(),
-    axis.text.y = element_blank(),      # Remove y-axis labels
-    axis.ticks = element_blank(),       # Remove all axis ticks
-    panel.grid = element_blank(),       # Remove grid lines
-    panel.background = element_blank(), # Remove background color
-    legend.position = "none",
-    # remove y axis title
-    axis.title.y = element_blank()
-  )
+
+
+
+
+
+##############################################
+## Step 2: Cluster SNPs by Chromosome
+
+dist_clusters <- getDistClusters(gwas, hapmap, dist_threshold, dist_cluster_count)
+
+## Step 3: Compute LD Matrices
+
+LDsInfo <- computeLDclusters(hapmap, dist_clusters, outfolder)
+
+## Step 4: Save LD Matrices
+
+saveLDs2folder(LDsInfo, outfolder)
+
+## Step 5: Cluster LD Values and Convert to Haplotypes
+
+clusterLDs <- getLDclusters(LDsInfo,ld_threshold, cls_count = 3)
+
+haplotypes <- HaploTraitR::convertLDclusters2Haps(hapmap, clusterLDs, comb_freq_threshold)
+haplotypes
+## Step 6: Get Sample Haplotypes and Save
+
+snpcombsample <- HaploTraitR::getHapCombSamples(haplotypes, hapmap)
+snpcombsample <- as.data.frame(snpcombsample)
+write.csv(snpcombsample, file = file.path(outfolder, "haplotype_combinations.csv"), row.names = FALSE)
+
+## Step 7: Read Phenotype Data
+
+
+
+## Step 8: Generate SNP Combination Tables
+
+SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
+
+## Step 9: Perform t-tests on SNP Combinations
+
+
+t_test_snpComp <-  HaploTraitR::testSNPcombs(SNPcombTables)
+
+## Step 10: Visualize Results
+
+
+for (cls_snp in names(t_test_snpComp)) {
+       HaploTraitR::plotHapCombBoxPlot(cls_snp, SNPcombTables, t_test_snpComp, outfolder= outfolder)
+       ggplot2::ggsave(file.path(outfolder, paste0(cls_snp, "_boxplot.png")), width = 8, height = 6)
+}
+
+### Plot Haplotype Distribution
+
+lDplots<-plotLDForClusters(ld_matrix_folder=LDsInfo[[1]], clusterLDs, outfolder=outfolder)
+
+### Plot LD Combination Matrix with LD
+
+LDCombs<-plotLDCombMatrix(LDsInfo[[1]], clusterLDs, haplotypes, gwas, outfolder=outfolder)
