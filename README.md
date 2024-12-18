@@ -3,6 +3,28 @@
 This project performs haplotype analysis and analyzing and visualizing phenotypic data across multiple genetic / haplotypes combinations 
 to understand the assocaition between haplotype (SNPs linked by LD) and variation in traits. 
 
+## Dependencies
+please install the following packages before installing the HaploTraitR package:
+
+```r
+# if not installed
+install.packages(c("devtools","Rcpp", "igraph", "ggplot2", "rstatix", "dplyr", "ggpubr", "reshape2", "gridExtra","ggtext"))
+
+
+# install the required packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("GWASTools")
+BiocManager::install("biomaRt")
+BiocManager::install("snplinkage")
+install.packages("snplinkage")
+```
+
+## instalation
+```r
+devtools::install_github("AlsammanAlsamman/HaploTraitR")
+```
+
 ## Sample Files
 
 - **Haplotype File:** `Barley_50K_KNNimp.hmp.txt`

@@ -15,5 +15,7 @@ Imports:
     Rcpp (>= 1.0.3),
     magrittr,
     rstatix,
-    dplyr
+    dplyr,
+    ggplot2,
+    ggtext,
 LinkingTo: Rcpp
