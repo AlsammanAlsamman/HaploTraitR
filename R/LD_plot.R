@@ -49,9 +49,9 @@ plotLDheatmap <- function(LD_matrix) {
 
   # Filter out duplicate SNP pairs
   LD_matrix_melted <- LD_matrix_melted[LD_matrix_melted$SNP_A != LD_matrix_melted$SNP_B, ]
-
+  #
   # Generate LD heatmap plot using custom plotting function
-  plt <- gtable_ld(LD_matrix_melted, df_snp = snp_info)
+  plt <- create_ld_plot(LD_matrix_melted, df_snp = snp_info)
   return(plt)
 }
 
@@ -104,7 +104,6 @@ plotLDForClusters <- function(ld_matrix_folder, clusterLDs, cluster_ids = NULL, 
 #' @importFrom ggplot2 theme_minimal
 #' @importFrom ggplot2 element_text
 #' @importFrom ggplot2 element_blank
-#' @importFrom ggplot2 element_markdown
 #' @import ggtext
 #' @return a ggplot objects showing the haplotype combinations matrix
 #' @export

@@ -17,6 +17,7 @@ Imports:
     rstatix,
     dplyr,
     ggplot2,
+    ggpubr,
     reshape2,
     ggtext,
 LinkingTo: Rcpp

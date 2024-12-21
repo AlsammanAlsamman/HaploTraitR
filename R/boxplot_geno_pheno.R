@@ -27,12 +27,13 @@ boxplot_geno_pheno <- function(geno_pheno, outfolder = NULL) {
 
     # Perform the t-test using compare_means()
     stat.test <- tryCatch({
-      compare_means(
+      test_result <- compare_means(
         formula = Trait ~ value,  # Define the formula for comparison
         data = sub_data,          # Use the subset data
         method = "t.test"         # Specify Welch Two Sample t-test
-      ) %>%
-        mutate(y.position = max(sub_data$Trait) + 1)  # Position above the boxplot
+      )
+      test_result$y.position <- max(sub_data$Trait) + 1  # Position above the boxplot
+      test_result
     }, error = function(e) {
       print(paste("Error in", snp, ":", e))
       NULL
