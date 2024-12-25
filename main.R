@@ -1,4 +1,5 @@
 library(HaploTraitR)
+setwd("/home/samman/Documents/MyGitHub/HaploTraitR")
 
 # Define file paths and output folder
 hapfile <- "sampledata/Barley_50K_KNNimp.hmp.txt"
@@ -20,16 +21,27 @@ gwas <- readGWAS(gwasfile, sep = "\t")
 
 hapmap <- readHapmap(hapfile)
 
-## New addition
 pheno <- read.csv(phenofile, header = TRUE, sep = "\t")
 
-# select sig SNPs
+## Step 2: Looking at the the variation phenotypic data across the genotypes
+# The analysis uses t-tests to compare the phenotypic data across the genotypes
+
+# select significant snps
 subhapmap<-extract_hapmap(hapmap, gwas)
 # get pheno and geno
-geno_pheno<-get_pheno_geno(subhapmap, pheno)
-# plot the boxplot
-boxplot_geno_pheno(geno_pheno, outfolder)
+geno_pheno_table<-get_pheno_geno(subhapmap, pheno)
 
+# plot the boxplot
+# create a subfolder to store the plots
+boxplot_geno_pheno_folder<-file.path(outfolder, "boxplot_geno_pheno")
+if (!dir.exists(boxplot_geno_pheno_folder)) {
+  dir.create(boxplot_geno_pheno_folder, showWarnings = FALSE)
+}
+
+
+boxplot_genotype_phenotype(genotype_phenotype_data = geno_pheno_table,
+                           outfolder = boxplot_geno_pheno_folder,
+                           method = "t.test")
 
 ############################################################################################################
 ## Step 2: Cluster SNPs by Chromosome
