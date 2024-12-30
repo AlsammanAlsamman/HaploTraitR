@@ -129,10 +129,10 @@ LDCombs <- plotLDCombMatrix(clusterLDs, haplotypes, gwas)
 Here are some example plots generated using the `HaploTraitR` package:
 
 ### Haplotype Combination Boxplot
-![Haplotype Combination Boxplot](out_example/7H:501592821_boxplot.png)
+![Haplotype Combination Boxplot](man/figures/7H:501592821_boxplot.png)
 
 ### LD Combination Matrix
-![LD Combination Matrix](out_example/7H:501592821_ld_comb_matrix.png)
+![LD Combination Matrix](man/figures/7H:501592821_ld_comb_matrix.png)
 
 ## Conclusion
 

@@ -2,7 +2,7 @@ pandoc: '3.2'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-12-30T03:24Z
+last_built: 2024-12-30T03:30Z
 urls:
   reference: https://AlsammanAlsamman.github.io/HaploTraitR/reference
   article: https://AlsammanAlsamman.github.io/HaploTraitR/articles
