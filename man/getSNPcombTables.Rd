@@ -4,12 +4,14 @@
 \alias{getSNPcombTables}
 \title{Get SNP combinations sample tables}
 \usage{
-getSNPcombTables(haplotypes, pheno)
+getSNPcombTables(haplotypes, pheno, savecopy = TRUE)
 }
 \arguments{
 \item{haplotypes}{A list of haplotype combinations}
 
 \item{pheno}{A phenotype data frame}
+
+\item{savecopy}{A boolean indicating whether to save a copy of the sample tables to the project folder+}
 }
 \value{
 A list of sample tables for each SNP combination

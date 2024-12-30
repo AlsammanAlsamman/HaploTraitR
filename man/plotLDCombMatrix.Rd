@@ -4,27 +4,20 @@
 \alias{plotLDCombMatrix}
 \title{Plot LD and Haplotype with Combination Matrix}
 \usage{
-plotLDCombMatrix(
-  ld_matrix_folder,
-  clusterLDs,
-  haplotypes,
-  gwas,
-  cluster_ids = NULL,
-  outfolder = NULL
-)
+plotLDCombMatrix(clusterLDs, haplotypes, gwas)
 }
 \arguments{
-\item{ld_matrix_folder}{a folder containing LD matrices}
-
 \item{clusterLDs}{a list of LD clusters}
 
 \item{haplotypes}{a data frame containing haplotype information}
 
 \item{gwas}{a list of GWAS SNPs}
 
-\item{outfolder}{a folder to save the plots}
+\item{ld_matrix_folder}{a folder containing LD matrices}
 
 \item{snps}{a vector of SNP names to plot}
+
+\item{outfolder}{a folder to save the plots}
 }
 \description{
 Plot LD and Haplotype with Combination Matrix

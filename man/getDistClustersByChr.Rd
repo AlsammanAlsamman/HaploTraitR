@@ -4,13 +4,7 @@
 \alias{getDistClustersByChr}
 \title{Get Distance clusters from GWAS and hapmap data By chromosome}
 \usage{
-getDistClustersByChr(
-  gwas,
-  hapmap,
-  chromosome,
-  dist_threshold,
-  dist_cluster_count
-)
+getDistClustersByChr(gwas, hapmap, chromosome)
 }
 \arguments{
 \item{gwas}{A list of GWAS data frames split by chromosome}
@@ -18,10 +12,6 @@ getDistClustersByChr(
 \item{hapmap}{A list of hapmap data frames split by chromosome}
 
 \item{chromosome}{The chromosome of interest}
-
-\item{dist_threshold}{The maximum distance between SNPs to consider for clustering}
-
-\item{dist_cluster_count}{The minimum number of SNPs required to form a cluster}
 }
 \value{
 A list of Dist clusters

@@ -1,10 +1,14 @@
 #' Cluster SNPs based on LD matrices
+#'
 #' @param LDsInfo a list containing the LD matrices and the info of the clusters
-#' @param ld_threshold The minimum LD value to consider two SNPs in LD
-#' @importFrom igraph graph_from_adjacency_matrix
+#' @importFrom igraph graph_from_adjacency_matrix components
+#' @export
 #' @return LD cluster information
-getLDclusters<-function(LDsInfo, ld_threshold,cls_count=3)
-{
+getLDclusters <- function(LDsInfo) {
+  # Retrieve configuration parameters
+  ld_threshold <- get_config("ld_threshold")
+  cls_count <- get_config("dist_cluster_count")
+
   out_info<-LDsInfo$out_info
   ld_folder<-LDsInfo$ld_folder
   cluster_info<-list()

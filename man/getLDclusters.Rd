@@ -4,12 +4,10 @@
 \alias{getLDclusters}
 \title{Cluster SNPs based on LD matrices}
 \usage{
-getLDclusters(LDsInfo, ld_threshold, cls_count = 3)
+getLDclusters(LDsInfo)
 }
 \arguments{
 \item{LDsInfo}{a list containing the LD matrices and the info of the clusters}
-
-\item{ld_threshold}{The minimum LD value to consider two SNPs in LD}
 }
 \value{
 LD cluster information

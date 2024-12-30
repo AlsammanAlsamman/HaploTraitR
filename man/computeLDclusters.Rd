@@ -2,20 +2,18 @@
 % Please edit documentation in R/computeLDcluster.R
 \name{computeLDclusters}
 \alias{computeLDclusters}
-\title{Compute LD matrix for a clusters}
+\title{Compute LD matrix for clusters}
 \usage{
-computeLDclusters(hapmap, haplotype_clusters, outfolder)
+computeLDclusters(hapmap, haplotype_clusters)
 }
 \arguments{
 \item{hapmap}{a hapmap object containing the genotypic data}
 
 \item{haplotype_clusters}{a list of haplotype clusters}
-
-\item{outfolder}{the output folder}
 }
 \value{
-a folder containing the LD matrices
+a list containing the path to the folder with LD matrices and information about the clusters
 }
 \description{
-Compute LD matrix for a clusters
+Compute LD matrix for clusters
 }

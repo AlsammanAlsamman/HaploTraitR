@@ -4,12 +4,14 @@
 \alias{getHapCombSamples}
 \title{Get samples for a haplotype combination}
 \usage{
-getHapCombSamples(haplotypes, hapmap)
+getHapCombSamples(haplotypes, hapmap, savecopy = TRUE)
 }
 \arguments{
 \item{haplotypes}{A list of haplotype combinations}
 
 \item{hapmap}{A hapmap object}
+
+\item{savecopy}{A boolean indicating whether to save a copy of the haplotype combinations to the project folder}
 }
 \value{
 A list of samples for each haplotype combination

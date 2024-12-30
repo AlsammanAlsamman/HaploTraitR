@@ -1,9 +1,10 @@
 #' Get SNP combinations sample tables
 #' @param haplotypes A list of haplotype combinations
 #' @param pheno A phenotype data frame
+#' @param savecopy A boolean indicating whether to save a copy of the sample tables to the project folder+
 #' @return A list of sample tables for each SNP combination
 #' @export
-getSNPcombTables <- function(haplotypes, pheno) {
+getSNPcombTables <- function(haplotypes, pheno, savecopy=TRUE){
   comb_sample_Tables<-list()
   colnames(pheno)<-c("Sample", "Pheno")
   for(snp_cls_i in 1:nrow(haplotypes))
@@ -27,5 +28,9 @@ getSNPcombTables <- function(haplotypes, pheno) {
   }
   # bind
   comb_sample_Tables<-do.call(rbind, comb_sample_Tables)
+  if(savecopy){
+    write.csv(comb_sample_Tables, file.path(get_config("outfolder"), "SNP_comb_sample_Tables.csv"))
+    print("Saved SNP_comb_sample_Tables.csv")
+  }
   return(comb_sample_Tables)
 }

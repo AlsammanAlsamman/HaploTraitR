@@ -4,21 +4,16 @@
 \alias{plotLDForClusters}
 \title{Plot LD heatmap from LDs Info table}
 \usage{
-plotLDForClusters(
-  ld_matrix_folder,
-  clusterLDs,
-  cluster_ids = NULL,
-  outfolder = NULL
-)
+plotLDForClusters(clusterLDs)
 }
 \arguments{
 \item{clusterLDs}{a list of LD clusters}
 
-\item{outfolder}{a folder to save the plots}
-
 \item{LDsInfo}{a list containing the LD matrices and the info of the clusters}
 
 \item{snps}{a vector of SNP names to plot}
+
+\item{outfolder}{a folder to save the plots}
 }
 \value{
 A list of ggplot objects showing the LD heatmaps

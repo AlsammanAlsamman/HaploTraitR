@@ -4,17 +4,17 @@
 \alias{convertLDclusters2Haps}
 \title{Convert LD clusters to haplotypes and calculate the frequency of each haplotype combination}
 \usage{
-convertLDclusters2Haps(hapmap, clusterLDs, comb_freq_threshold)
+convertLDclusters2Haps(hapmap, clusterLDs, savecopy = TRUE)
 }
 \arguments{
-\item{hapmap}{A hapmap object}
+\item{hapmap}{a hapmap object containing the genotypic data}
 
-\item{clusterLDs}{A list of LD clusters}
+\item{clusterLDs}{a list of clusters}
 
-\item{comb_freq_threshold}{The minimum frequency of a haplotype combination}
+\item{savecopy}{a boolean indicating whether to save a copy of the haplotype combinations to the project folder}
 }
 \value{
-A list of haplotype combinations with their frequencies
+a data frame containing the haplotype combinations and their frequencies
 }
 \description{
 Convert LD clusters to haplotypes and calculate the frequency of each haplotype combination

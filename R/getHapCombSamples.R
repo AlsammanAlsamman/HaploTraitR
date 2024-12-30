@@ -1,10 +1,11 @@
 #' Get samples for a haplotype combination
 #' @param haplotypes A list of haplotype combinations
 #' @param hapmap A hapmap object
+#' @param savecopy A boolean indicating whether to save a copy of the haplotype combinations to the project folder
 #' @return A list of samples for each haplotype combination
 #' @export
 ########## Need to be more optimized
-getHapCombSamples<-function(haplotypes, hapmap)
+getHapCombSamples<-function(haplotypes, hapmap, savecopy=TRUE)
 {
   # add column for haplotypes
   haplotypes$samples<-NA
@@ -40,6 +41,13 @@ getHapCombSamples<-function(haplotypes, hapmap)
     no_comb_samples<-paste(no_comb_samples, collapse="|")
     # add samples to haplotypes
     haplotypes<-rbind(haplotypes, data.frame(clusterComb="None", Freq=1-total_comp_freq, chr=chr, snps="",snp=snp_cls, comb="0", samples=no_comb_samples))
+  }
+  # save a copy to the project folder
+  if(savecopy)
+  {
+    outfolder<-get_config("outfolder")
+    write.csv(haplotypes, file.path(outfolder, "haplotypes.csv"), row.names=FALSE)
+    print("Haplotypes saved to haplotypes.csv")
   }
   return(haplotypes)
 }

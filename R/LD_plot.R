@@ -65,14 +65,31 @@ plotLDheatmap <- function(LD_matrix) {
 #' @importFrom ggplot2 ggsave
 #' @return A list of ggplot objects showing the LD heatmaps
 #' @export
-plotLDForClusters <- function(ld_matrix_folder, clusterLDs, cluster_ids = NULL, outfolder = NULL)
+plotLDForClusters <- function(clusterLDs)
 {
-  ldPlots <- list()
-  # if cluster_ids is not provided, plot all clusters
-  if (is.null(cluster_ids)) {
-    cluster_ids <- names(clusterLDs)
+  outfolder <- get_config("outfolder")
+  # create a subfolder to save the LD matrices plots
+  outfolder_sub <- file.path(outfolder, "LD_matrices_plots")
+  if (!dir.exists(outfolder_sub)) {
+    dir.create(outfolder_sub, showWarnings = FALSE, recursive = TRUE)
   }
-  for (cls in cluster_ids) {
+
+  # ld_matrix_folder
+  ld_matrix_folder<-file.path(outfolder, "LD_matrices")
+
+  # set the outfolder to save the plots in a subfolder
+  outfolder <- outfolder_sub
+
+  ldPlots <- list()
+  # # if cluster_ids is not provided, plot all clusters
+  # if (is.null(cluster_ids)) {
+  #   cluster_ids <- names(clusterLDs)
+  # }
+  for (cls in names(clusterLDs)) {
+    # if there is no cluster, skip
+    if (length(clusterLDs[[cls]]) == 0) {
+      next
+    }
     chr <- strsplit(cls, ":")[[1]][1]
     # Read LD matrix
     LD_matrix_file <- file.path(ld_matrix_folder, paste(cls, "ld_matrix.csv", sep = "_"))
@@ -185,15 +202,28 @@ plotCombMatrix<-function(cluster_id, haplotypes, gwas, snps=NULL, outfolder = NU
 #' @importFrom ggplot2 theme_minimal
 #' @export
 
-plotLDCombMatrix<-function(ld_matrix_folder, clusterLDs, haplotypes, gwas, cluster_ids=NULL, outfolder = NULL)
+plotLDCombMatrix<-function(clusterLDs, haplotypes, gwas)
 {
-  # if cluster_ids is not provided, plot all clusters
-  if (is.null(cluster_ids)) {
-    cluster_ids <- names(clusterLDs)
+  outfolder <- get_config("outfolder")
+  ld_matrix_folder<-file.path(outfolder, "LD_matrices")
+
+  # create a subfolder to save the LD matrices plots
+  outfolder_sub <- file.path(outfolder, "LD_hap_comb_matrices_plots")
+  if (!dir.exists(outfolder_sub)) {
+    dir.create(outfolder_sub, showWarnings = FALSE, recursive = TRUE)
   }
+  outfolder <- outfolder_sub
+  # # if cluster_ids is not provided, plot all clusters
+  # if (is.null(cluster_ids)) {
+  #   cluster_ids <- names(clusterLDs)
+  # }
 
   ld_comb_plots<-list()
-  for (cls in cluster_ids) {
+  for (cls in names(clusterLDs)) {
+    # if there is no cluster, skip
+    if (length(clusterLDs[[cls]]) == 0) {
+      next
+    }
     chr <- strsplit(cls, ":")[[1]][1]
     # Read LD matrix
     LD_matrix_file <- file.path(ld_matrix_folder, paste(cls, "ld_matrix.csv", sep = "_"))

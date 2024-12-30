@@ -2,21 +2,25 @@
 % Please edit documentation in R/readGWAS.R
 \name{readGWAS}
 \alias{readGWAS}
-\title{read gwas results file rs, chr, pos, p}
+\title{Read GWAS results file with specified columns and FDR calculation}
 \usage{
 readGWAS(gwasfile, header = TRUE, sep = "\\t")
 }
 \arguments{
 \item{gwasfile}{Path to the GWAS file}
+
+\item{header}{Logical, whether the file contains a header row}
+
+\item{sep}{Separator used in the file}
 }
 \value{
-A data frame with the GWAS data
+A data frame with the GWAS data, including calculated FDR if not present
 }
 \description{
-read gwas results file rs, chr, pos, p
+Read GWAS results file with specified columns and FDR calculation
 }
 \examples{
-gwasfile<-"SignificantSNP_GWAS.csv"
-gwas<-readGWAS(gwasfile)
+gwasfile <- "SignificantSNP_GWAS.csv"
+gwas <- readGWAS(gwasfile)
 print(gwas)
 }

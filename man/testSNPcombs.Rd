@@ -4,10 +4,12 @@
 \alias{testSNPcombs}
 \title{Calculate the p-value for a SNP combinations}
 \usage{
-testSNPcombs(comb_sample_Tables)
+testSNPcombs(comb_sample_Tables, savecopy = TRUE)
 }
 \arguments{
 \item{comb_sample_Tables}{A list of sample tables for each SNP combination}
+
+\item{savecopy}{A boolean indicating whether to save a copy of the t-test results to the project folder}
 }
 \value{
 A data frame with the p-values for the SNP combinations

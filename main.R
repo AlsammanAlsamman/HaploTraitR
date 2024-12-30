@@ -1,96 +1,77 @@
 library(HaploTraitR)
-setwd("/home/samman/Documents/MyGitHub/HaploTraitR")
 
-# Define file paths and output folder
-hapfile <- "sampledata/Barley_50K_KNNimp.hmp.txt"
+# This script performs a haplotype combination analysis using GWAS, hapmap, and phenotype data.
+# The analysis consists of two parts: one that requires phenotype data and one that does not.
+
+# Initialize configuration (uncomment if needed)
+# initialize_config()
+
+# Step 1: Create a unique output folder for results
+result_folder <- create_unique_result_folder(location = "sampleout")
+set_config(config = list(outfolder = result_folder))
+get_config("outfolder")
+
+# Step 2: Read Data Files
+
+# GWAS data file containing significant SNPs
 gwasfile <- "sampledata/SignificantSNP_GWAS.tsv"
+
+# Hapmap file containing SNP genotypes
+hapfile <- "sampledata/Barley_50K_KNNimp.hmp.txt"
+
+# Phenotype data file
 phenofile <- "sampledata/Pheno_ANN19.tsv"
-outfolder <- "sampleout"
 
-### Setting Thresholds
-
-dist_threshold <- 1000000 # Distance threshold (1Mb)
-dist_cluster_count <- 5   # Minimum SNPs in a cluster
-ld_threshold <- 0.3       # Minimum LD value for two SNPs to be in LD
-comb_freq_threshold <- 0.1 # Minimum genotype frequency for a combination
-
-
-## Step 1: Reading Data Files
-
+# Read GWAS data
 gwas <- readGWAS(gwasfile, sep = "\t")
 
+# Read Hapmap data
 hapmap <- readHapmap(hapfile)
 
+# Read Phenotype data
 pheno <- read.csv(phenofile, header = TRUE, sep = "\t")
 
-## Step 2: Looking at the the variation phenotypic data across the genotypes
-# The analysis uses t-tests to compare the phenotypic data across the genotypes
+# Set phenotype information in the configuration
+set_config(config = list(phenotypename = "PH", phenotypeunit = "cm"))
 
-# select significant snps
-subhapmap<-extract_hapmap(hapmap, gwas)
-# get pheno and geno
-geno_pheno_table<-get_pheno_geno(subhapmap, pheno)
+# Step 3: Generate Boxplots for Genotype-Phenotype Distribution
+# This step generates boxplots showing the distribution of haplotype combinations compared to each other.
+bxplts <- boxplot_genotype_phenotype(pheno, gwas, hapmap)
 
-# plot the boxplot
-# create a subfolder to store the plots
-boxplot_geno_pheno_folder<-file.path(outfolder, "boxplot_geno_pheno")
-if (!dir.exists(boxplot_geno_pheno_folder)) {
-  dir.create(boxplot_geno_pheno_folder, showWarnings = FALSE)
-}
+# Step 4: Cluster SNPs by Chromosome
+# This step clusters SNPs based on their chromosome and physical distance.
+dist_clusters <- getDistClusters(gwas, hapmap)
 
+# Step 5: Compute LD Matrices
+# This step computes linkage disequilibrium (LD) matrices for each SNP cluster.
+# The matrices will be saved in the outfolder/LD_matrices folder.
+LDsInfo <- computeLDclusters(hapmap, dist_clusters)
 
-boxplot_genotype_phenotype(genotype_phenotype_data = geno_pheno_table,
-                           outfolder = boxplot_geno_pheno_folder,
-                           method = "t.test")
+# Step 6: Cluster LD Values and Convert to Haplotypes
+# This step clusters LD values and converts them to haplotypes.
+clusterLDs <- getLDclusters(LDsInfo)
+haplotypes <- HaploTraitR::convertLDclusters2Haps(hapmap, clusterLDs)
 
-############################################################################################################
-## Step 2: Cluster SNPs by Chromosome
-
-dist_clusters <- getDistClusters(gwas, hapmap, dist_threshold, dist_cluster_count)
-
-## Step 3: Compute LD Matrices
-
-LDsInfo <- computeLDclusters(hapmap, dist_clusters, outfolder)
-
-## Step 4: Save LD Matrices
-
-saveLDs2folder(LDsInfo, outfolder)
-
-## Step 5: Cluster LD Values and Convert to Haplotypes
-
-clusterLDs <- getLDclusters(LDsInfo,ld_threshold, cls_count = 3)
-
-haplotypes <- HaploTraitR::convertLDclusters2Haps(hapmap, clusterLDs, comb_freq_threshold)
-
-## Step 6: Get Sample Haplotypes and Save
-
+# Step 7: Get Sample Haplotypes and Save
+# This step extracts sample haplotypes from the hapmap data.
 snpcombsample <- HaploTraitR::getHapCombSamples(haplotypes, hapmap)
 
-snpcombsample <- as.data.frame(snpcombsample)
-write.csv(snpcombsample, file = file.path(outfolder, "haplotype_combinations.csv"), row.names = FALSE)
-
-## Step 8: Generate SNP Combination Tables
-
+# Step 8: Generate SNP Combination Tables
+# This step generates tables of SNP combinations and their corresponding phenotypes.
 SNPcombTables <- getSNPcombTables(snpcombsample, pheno)
 
-## Step 9: Perform t-tests on SNP Combinations
+# Step 9: Perform t-tests on SNP Combinations
+# This step performs t-tests on the SNP combinations to identify significant differences.
+t_test_snpComp <- HaploTraitR::testSNPcombs(SNPcombTables)
 
+# Step 10: Generate and Save Haplotype Combination Boxplots
+# This step generates boxplots showing the distribution of haplotype combinations and saves them in categorized directories.
+generateHapCombBoxPlots(SNPcombTables, t_test_snpComp)
 
-t_test_snpComp <-  HaploTraitR::testSNPcombs(SNPcombTables)
+# Step 11: Plot Haplotype Distribution
+# This step plots the distribution of haplotypes for each LD cluster.
+lDplots <- plotLDForClusters(clusterLDs)
 
-## Step 10: Visualize Results
-
-
-for (cls_snp in names(t_test_snpComp)) {
-       HaploTraitR::plotHapCombBoxPlot(cls_snp, SNPcombTables, t_test_snpComp, outfolder= outfolder)
-       ggplot2::ggsave(file.path(outfolder, paste0(cls_snp, "_LD_boxplot.png")), width = 8, height = 6)
-}
-
-### Plot Haplotype Distribution
-#library(ggplot2)
-lDplots<-plotLDForClusters(ld_matrix_folder=LDsInfo[[1]], clusterLDs, outfolder=outfolder)
-
-### Plot LD Combination Matrix with LD
-
-LDCombs<-plotLDCombMatrix(LDsInfo[[1]], clusterLDs, haplotypes, gwas, outfolder=outfolder)
-
+# Step 12: Plot LD Combination Matrix with LD
+# This step plots the LD combination matrix, showing the LD values for different SNP combinations.
+LDCombs <- plotLDCombMatrix(clusterLDs, haplotypes, gwas)

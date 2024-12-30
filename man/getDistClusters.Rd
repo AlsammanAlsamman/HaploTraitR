@@ -4,16 +4,12 @@
 \alias{getDistClusters}
 \title{Get haplotype clusters from GWAS and hapmap data}
 \usage{
-getDistClusters(gwas, hapmap, dist_threshold, dist_cluster_count)
+getDistClusters(gwas, hapmap)
 }
 \arguments{
 \item{gwas}{A list of GWAS data frames split by chromosome}
 
 \item{hapmap}{A list of hapmap data frames split by chromosome}
-
-\item{dist_threshold}{The maximum distance between SNPs to consider for clustering}
-
-\item{dist_cluster_count}{The minimum number of SNPs required to form a cluster}
 }
 \value{
 A list of haplotype clusters

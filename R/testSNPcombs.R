@@ -1,11 +1,12 @@
 #' Calculate the p-value for a SNP combinations
 #' @param comb_sample_Tables A list of sample tables for each SNP combination
+#' @param savecopy A boolean indicating whether to save a copy of the t-test results to the project folder
 #' @return A data frame with the p-values for the SNP combinations
 #' @importFrom rstatix t_test
 #' @importFrom rstatix add_xy_position
 #' @importFrom dplyr mutate
 #' @export
-testSNPcombs <- function(comb_sample_Tables) {
+testSNPcombs <- function(comb_sample_Tables, savecopy=TRUE) {
   snp_clss<-unique(comb_sample_Tables$SNP)
   snp_test_results<-list()
   snp_cls_names<-c()
@@ -36,5 +37,10 @@ testSNPcombs <- function(comb_sample_Tables) {
   }
   # check that the names are correct
   names(snp_test_results) <- snp_cls_names
+  if(savecopy)
+  {
+    saveTTestResultsToFile(snp_test_results)
+  }
   return(snp_test_results)
 }
+
