@@ -3,7 +3,7 @@ Type: Package
 Title: Calculation of Haplotype Trait Relative
 Version: 0.1.0
 Author: Alsamman M. Alsamman
-URL: AlsammanAlsamman.github.io/HaploTraitR
+URL: AlsammanAlsamman.github.io/HaploTraitR, https://alsammanalsamman.github.io/HaploTraitR/
 url: AlsammanAlsamman.github.io/HaploTraitR
 Maintainer: The package maintainer <aalsamman100@gmail.com>
 Description: More about what it does (maybe more than one line)
