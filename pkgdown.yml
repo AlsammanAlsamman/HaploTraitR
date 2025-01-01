@@ -1,8 +1,0 @@
-pandoc: 3.1.11
-pkgdown: 2.1.1
-pkgdown_sha: ~
-articles: {}
-last_built: 2024-12-30T09:04Z
-urls:
-  reference: https://alsammanalsamman.github.io/HaploTraitR/reference
-  article: https://alsammanalsamman.github.io/HaploTraitR/articles
