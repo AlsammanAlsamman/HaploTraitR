@@ -1,3 +1,15 @@
+---
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+<!-- Link to the external CSS file -->
+<link rel="stylesheet" type="text/css" href="styles.css">
+
+<!-- Include the JavaScript file -->
+<script src="team.js"></script>
+
 # Haplotype Analysis Project
 
 This project performs haplotype analysis and visualizes phenotypic data across multiple genetic/haplotype combinations to understand the association between haplotypes (SNPs linked by LD) and variation in traits.
@@ -134,6 +146,64 @@ Here are some example plots generated using the `HaploTraitR` package:
 ### LD Combination Matrix
 ![LD Combination Matrix](man/figures/7H:501592821_ld_comb_matrix.png)
 
-## Conclusion
+## Team Members
+<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Section</title>
+  <link rel="stylesheet" type="text/css" href="man/figures/styles.css">
+</head>
+<body>
 
-This README provides an overview of the steps involved in performing haplotype analysis using the `HaploTraitR` package. For more detailed instructions, please refer to the `tutorial.Rmd` file included in the repository. This project aims to help researchers understand the genetic basis of phenotypic variation by analyzing and visualizing the associations between haplotypes and traits.
+<h2>Team</h2>
+
+<div id="team-container" class="team-container">
+  <!-- Team members will be dynamically inserted here by JavaScript -->
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const teamContainer = document.getElementById("team-container");
+
+  const teamMembers = [
+    {
+      name: "Dr. Zakaria Kehel",
+      affiliation: "genetic resources scientist and senior biometrician",
+      img: "man/figures/zk.jpg"
+    },
+    {
+      name: "Alsamman Alsamman",
+      affiliation: "ICARDA Bioinformatics consultant",
+      img: "man/figures/ama.png"
+    }
+  ];
+
+  teamMembers.forEach(member => {
+    const memberDiv = document.createElement("div");
+    memberDiv.className = "team-member";
+
+    const img = document.createElement("img");
+    img.src = member.img;
+    img.alt = member.name;
+    img.width = 150;
+    img.height = 150;
+
+    const name = document.createElement("h3");
+    name.textContent = member.name;
+
+    const affiliation = document.createElement("p");
+    affiliation.textContent = member.affiliation;
+
+    memberDiv.appendChild(img);
+    memberDiv.appendChild(name);
+    memberDiv.appendChild(affiliation);
+
+    teamContainer.appendChild(memberDiv);
+  });
+});
+</script>
+
+</body>
+</html>

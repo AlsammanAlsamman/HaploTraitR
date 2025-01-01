@@ -2,12 +2,19 @@ Package: HaploTraitR
 Type: Package
 Title: Calculation of Haplotype Trait Relative
 Version: 0.1.0
-Author: Alsamman M. Alsamman
 URL: AlsammanAlsamman.github.io/HaploTraitR, https://alsammanalsamman.github.io/HaploTraitR/
 url: AlsammanAlsamman.github.io/HaploTraitR
 Maintainer: The package maintainer <aalsamman100@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Authors@R: c(
+    person("Alsamman", "Alsamman", , "aalsamman100@gmail.com", role = c("aut", "cre")),
+    person("Tamara", "Ortiz", , "tamara.ortizru@gmail.com", role = "ctb"),
+    person("Khaled", "Helmy", , "khaledhelmy444@gmail.com", role = "ctb"),
+    person("Zakaria", "Kehel", , "z.kehel@cgiar.org", role = "ctb"),
+    person("ICARDA", role = "cph")
+  )
+Author: Alsamman Alsamman [aut, cre], Tamara Ortiz [ctb], Khaled Helmy [ctb], Zakaria
+    Kehel [ctb], ICARDA [cph]
+Description: This project performs haplotype analysis and visualizes phenotypic data across multiple genetic/haplotype combinations to understand the association between haplotypes (SNPs linked by LD) and variation in traits.
 License: MIT
 Encoding: UTF-8
 LazyData: true

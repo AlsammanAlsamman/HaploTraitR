@@ -1,4 +1,11 @@
 url: https://alsammanalsamman.github.io/HaploTraitR/
 template:
   bootstrap: 5
-
+  theme: arrow-dark
+  bslib:
+    code-bg: "#52504c"
+    # color of code inside text blocks
+    code-color: "#f8f9fa"
+  params:
+    css: "styles.css"
+    raw_html: true

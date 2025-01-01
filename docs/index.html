@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Calculation of Haplotype Trait Relative">
-<meta name="description" content="More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.">
-<meta property="og:description" content="More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.">
+<meta name="description" content="This project performs haplotype analysis and visualizes phenotypic data across multiple genetic/haplotype combinations to understand the association between haplotypes (SNPs linked by LD) and variation in traits.">
+<meta property="og:description" content="This project performs haplotype analysis and visualizes phenotypic data across multiple genetic/haplotype combinations to understand the association between haplotypes (SNPs linked by LD) and variation in traits.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -44,7 +44,9 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
+  <main id="main" class="col-md-9"><p><link rel="stylesheet" type="text/css" href="styles.css"></p>
+<!-- Include the JavaScript file -->
+<script src="team.js"></script><div class="section level1">
 <div class="page-header"><h1 id="haplotype-analysis-project">Haplotype Analysis Project<a class="anchor" aria-label="anchor" href="#haplotype-analysis-project"></a>
 </h1></div>
 <p>This project performs haplotype analysis and visualizes phenotypic data across multiple genetic/haplotype combinations to understand the association between haplotypes (SNPs linked by LD) and variation in traits.</p>
@@ -216,11 +218,72 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+<h2 id="team-members">Team Members<a class="anchor" aria-label="anchor" href="#team-members"></a>
 </h2>
-<p>This README provides an overview of the steps involved in performing haplotype analysis using the <code>HaploTraitR</code> package. For more detailed instructions, please refer to the <code>tutorial.Rmd</code> file included in the repository. This project aims to help researchers understand the genetic basis of phenotypic variation by analyzing and visualizing the associations between haplotypes and traits.</p>
+</div>
+<div class="section level2">
+<h2 id="team">Team<a class="anchor" aria-label="anchor" href="#team"></a>
+</h2>
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+Team Section
+</title>
+<link rel="stylesheet" type="text/css" href="man/figures/styles.css">
+<h2 id="team-1">
+Team
+<a class="anchor" aria-label="anchor" href="#team-1"></a>
+</h2>
+<div id="team-container" class="team-container">
+<p><!-- Team members will be dynamically inserted here by JavaScript --></p>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const teamContainer = document.getElementById("team-container");
+
+  const teamMembers = [
+    {
+      name: "Dr. Zakaria Kehel",
+      affiliation: "genetic resources scientist and senior biometrician",
+      img: "man/figures/zk.jpg"
+    },
+    {
+      name: "Alsamman Alsamman",
+      affiliation: "ICARDA Bioinformatics consultant",
+      img: "man/figures/ama.png"
+    }
+  ];
+
+  teamMembers.forEach(member => {
+    const memberDiv = document.createElement("div");
+    memberDiv.className = "team-member";
+
+    const img = document.createElement("img");
+    img.src = member.img;
+    img.alt = member.name;
+    img.width = 150;
+    img.height = 150;
+
+    const name = document.createElement("h3");
+    name.textContent = member.name;
+
+    const affiliation = document.createElement("p");
+    affiliation.textContent = member.affiliation;
+
+    memberDiv.appendChild(img);
+    memberDiv.appendChild(name);
+    memberDiv.appendChild(affiliation);
+
+    teamContainer.appendChild(memberDiv);
+  });
+});
+</script>
 </div>
 </div>
+
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
@@ -239,7 +302,8 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>The package maintainer <br><small class="roles"> Maintainer </small>  </li>
+<li>Alsamman Alsamman <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
@@ -250,7 +314,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by The package maintainer.</p>
+  <p>Developed by Alsamman Alsamman.</p>
 </div>
 
 <div class="pkgdown-footer-right">
