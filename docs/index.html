@@ -44,9 +44,7 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><p><link rel="stylesheet" type="text/css" href="styles.css"></p>
-<!-- Include the JavaScript file -->
-<script src="team.js"></script><div class="section level1">
+  <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="haplotype-analysis-project">Haplotype Analysis Project<a class="anchor" aria-label="anchor" href="#haplotype-analysis-project"></a>
 </h1></div>
 <p>This project performs haplotype analysis and visualizes phenotypic data across multiple genetic/haplotype combinations to understand the association between haplotypes (SNPs linked by LD) and variation in traits.</p>
@@ -127,6 +125,8 @@
 <li>
 <strong>phenotypename:</strong> <code>"Phenotype"</code> (Name of the phenotype)</li>
 <li>
+<strong>pheno_col:</strong> <code>"Phenotype"</code> (Column name for phenotype in phenotype file)</li>
+<li>
 <strong>phenotypeunit:</strong> <code>NULL</code> (Unit of the phenotype)</li>
 </ul>
 <p>To initialize the default configuration, use the <code>initialize_config</code> function:</p>
@@ -144,33 +144,59 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
+<p>Sure! Here is the improved and clearer version of the workflow:</p>
 <div class="section level3">
 <h3 id="example-workflow">Example Workflow<a class="anchor" aria-label="anchor" href="#example-workflow"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://alsammanalsamman.github.io/HaploTraitR/">HaploTraitR</a></span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Step 0: Reset configuration</span></span>
+<span><span class="fu">HaploTraitR</span><span class="fu">::</span><span class="fu"><a href="reference/reset_config.html">reset_config</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Step 0.1: List available configuration parameters</span></span>
+<span><span class="co"># list_config()</span></span>
+<span></span>
+<span><span class="co"># Step 0.2: Set the phenotype information</span></span>
+<span><span class="va">phenotype</span> <span class="op">&lt;-</span> <span class="st">"Area"</span></span>
+<span><span class="va">phenotype_unit</span> <span class="op">&lt;-</span> <span class="st">"cm2"</span></span>
+<span><span class="fu"><a href="reference/set_config.html">set_config</a></span><span class="op">(</span>config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>phenotypename <span class="op">=</span> <span class="va">phenotype</span>,</span>
+<span>                         pheno_col <span class="op">=</span> <span class="va">phenotype</span>,</span>
+<span>                         phenotypeunit <span class="op">=</span> <span class="va">phenotype_unit</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Step 1: Create a unique output folder for results</span></span>
 <span><span class="va">result_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_unique_result_folder.html">create_unique_result_folder</a></span><span class="op">(</span>location <span class="op">=</span> <span class="st">"sampleout"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/set_config.html">set_config</a></span><span class="op">(</span>config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>outfolder <span class="op">=</span> <span class="va">result_folder</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Step 2: Read Data Files</span></span>
-<span><span class="va">gwasfile</span> <span class="op">&lt;-</span> <span class="st">"sampledata/SignificantSNP_GWAS.tsv"</span></span>
-<span><span class="va">hapfile</span> <span class="op">&lt;-</span> <span class="st">"sampledata/Barley_50K_KNNimp.hmp.txt"</span></span>
-<span><span class="va">phenofile</span> <span class="op">&lt;-</span> <span class="st">"sampledata/Pheno_ANN19.tsv"</span></span>
+<span><span class="co"># Step 2: Read Data Files from the Sample Data</span></span>
+<span><span class="va">gwas_file</span> <span class="op">&lt;-</span> <span class="st">"sampledata/gwas_area_ann19.csv"</span></span>
+<span><span class="va">hapmap_file</span> <span class="op">&lt;-</span> <span class="st">"sampledata/Barley_50K.tsv"</span></span>
+<span><span class="va">pheno_file</span> <span class="op">&lt;-</span> <span class="st">"sampledata/area_ann19.tsv"</span></span>
 <span></span>
-<span><span class="va">gwas</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/readGWAS.html">readGWAS</a></span><span class="op">(</span><span class="va">gwasfile</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span>
-<span><span class="va">hapmap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/readHapmap.html">readHapmap</a></span><span class="op">(</span><span class="va">hapfile</span><span class="op">)</span></span>
-<span><span class="va">pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">phenofile</span>, header <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span>
+<span><span class="co"># Read GWAS data</span></span>
+<span><span class="va">gwas</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_gwas_file.html">read_gwas_file</a></span><span class="op">(</span><span class="va">gwas_file</span>, sep <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span>
+<span><span class="co"># Read hapmap data</span></span>
+<span><span class="va">hapmap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/readHapmap.html">readHapmap</a></span><span class="op">(</span><span class="va">hapmap_file</span><span class="op">)</span></span>
+<span><span class="co"># Read phenotype data</span></span>
+<span><span class="va">pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">pheno_file</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Step 3: Set phenotype information in the configuration</span></span>
-<span><span class="fu"><a href="reference/set_config.html">set_config</a></span><span class="op">(</span>config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>phenotypename <span class="op">=</span> <span class="st">"PH"</span>, phenotypeunit <span class="op">=</span> <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Or you can use the data provided in the package</span></span>
+<span><span class="co"># data("barley_area", package = "HaploTraitR")</span></span>
+<span><span class="co"># gwas &lt;- barley_area$gwas</span></span>
+<span><span class="co"># hapmap &lt;- barley_area$hapmap</span></span>
+<span><span class="co"># pheno &lt;- barley_area$pheno</span></span>
+<span></span>
+<span><span class="co"># Step 3: Set FDR threshold and filter GWAS data</span></span>
+<span><span class="fu"><a href="reference/set_config.html">set_config</a></span><span class="op">(</span>config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fdr_threshold <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">gwas_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_gwas_data.html">filter_gwas_data</a></span><span class="op">(</span><span class="va">gwas</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gwas_filtered</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gwas_filtered</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 4: Generate Boxplots for Genotype-Phenotype Distribution</span></span>
-<span><span class="va">bxplts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/boxplot_genotype_phenotype.html">boxplot_genotype_phenotype</a></span><span class="op">(</span><span class="va">pheno</span>, <span class="va">gwas</span>, <span class="va">hapmap</span><span class="op">)</span></span>
+<span><span class="va">bxplts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/boxplot_genotype_phenotype.html">boxplot_genotype_phenotype</a></span><span class="op">(</span><span class="va">pheno</span>, <span class="va">gwas_filtered</span>, <span class="va">hapmap</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 5: Cluster SNPs by Chromosome</span></span>
-<span><span class="va">dist_clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getDistClusters.html">getDistClusters</a></span><span class="op">(</span><span class="va">gwas</span>, <span class="va">hapmap</span><span class="op">)</span></span>
+<span><span class="va">dist_clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getDistClusters.html">getDistClusters</a></span><span class="op">(</span><span class="va">gwas_filtered</span>, <span class="va">hapmap</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 6: Compute LD Matrices</span></span>
 <span><span class="va">LDsInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/computeLDclusters.html">computeLDclusters</a></span><span class="op">(</span><span class="va">hapmap</span>, <span class="va">dist_clusters</span><span class="op">)</span></span>
@@ -180,10 +206,10 @@
 <span><span class="va">haplotypes</span> <span class="op">&lt;-</span> <span class="fu">HaploTraitR</span><span class="fu">::</span><span class="fu"><a href="reference/convertLDclusters2Haps.html">convertLDclusters2Haps</a></span><span class="op">(</span><span class="va">hapmap</span>, <span class="va">clusterLDs</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 8: Get Sample Haplotypes and Save</span></span>
-<span><span class="va">snpcombsample</span> <span class="op">&lt;-</span> <span class="fu">HaploTraitR</span><span class="fu">::</span><span class="fu"><a href="reference/getHapCombSamples.html">getHapCombSamples</a></span><span class="op">(</span><span class="va">haplotypes</span>, <span class="va">hapmap</span><span class="op">)</span></span>
+<span><span class="va">snpcomb_sample</span> <span class="op">&lt;-</span> <span class="fu">HaploTraitR</span><span class="fu">::</span><span class="fu"><a href="reference/getHapCombSamples.html">getHapCombSamples</a></span><span class="op">(</span><span class="va">haplotypes</span>, <span class="va">hapmap</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 9: Generate SNP Combination Tables</span></span>
-<span><span class="va">SNPcombTables</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getSNPcombTables.html">getSNPcombTables</a></span><span class="op">(</span><span class="va">snpcombsample</span>, <span class="va">pheno</span><span class="op">)</span></span>
+<span><span class="va">SNPcombTables</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getSNPcombTables.html">getSNPcombTables</a></span><span class="op">(</span><span class="va">snpcomb_sample</span>, <span class="va">pheno</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 10: Perform t-tests on SNP Combinations</span></span>
 <span><span class="va">t_test_snpComp</span> <span class="op">&lt;-</span> <span class="fu">HaploTraitR</span><span class="fu">::</span><span class="fu"><a href="reference/testSNPcombs.html">testSNPcombs</a></span><span class="op">(</span><span class="va">SNPcombTables</span><span class="op">)</span></span>
@@ -191,11 +217,15 @@
 <span><span class="co"># Step 11: Generate and Save Haplotype Combination Boxplots</span></span>
 <span><span class="fu"><a href="reference/generateHapCombBoxPlots.html">generateHapCombBoxPlots</a></span><span class="op">(</span><span class="va">SNPcombTables</span>, <span class="va">t_test_snpComp</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Step 12: Plot Haplotype Distribution</span></span>
-<span><span class="va">lDplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plotLDForClusters.html">plotLDForClusters</a></span><span class="op">(</span><span class="va">clusterLDs</span><span class="op">)</span></span>
+<span><span class="co"># Step 12: Plot Haplotype Distribution (Optional)</span></span>
+<span><span class="co"># lDplots &lt;- plotLDForClusters(clusterLDs)</span></span>
 <span></span>
 <span><span class="co"># Step 13: Plot LD Combination Matrix with LD</span></span>
-<span><span class="va">LDCombs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plotLDCombMatrix.html">plotLDCombMatrix</a></span><span class="op">(</span><span class="va">clusterLDs</span>, <span class="va">haplotypes</span>, <span class="va">gwas</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">LDCombs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plotLDCombMatrix.html">plotLDCombMatrix</a></span><span class="op">(</span><span class="va">clusterLDs</span>, <span class="va">haplotypes</span>, <span class="va">gwas_filtered</span><span class="op">)</span></span>
+<span><span class="co"># Note: For a large number of SNPs, the plot may not be clear or may raise an error.</span></span>
+<span></span>
+<span><span class="co"># Step 14: Plot Haplotypes on the Genome</span></span>
+<span><span class="fu"><a href="reference/plot_haplotypes_genome.html">plot_haplotypes_genome</a></span><span class="op">(</span><span class="va">gwas</span>, <span class="va">haplotypes</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -220,70 +250,64 @@
 <div class="section level2">
 <h2 id="team-members">Team Members<a class="anchor" aria-label="anchor" href="#team-members"></a>
 </h2>
+<div class="section level3">
+<h3 id="dr-zakaria-kehel">Dr. Zakaria Kehel<a class="anchor" aria-label="anchor" href="#dr-zakaria-kehel"></a>
+</h3>
+<ul>
+<li>Affiliation: genetic resources scientist and senior biometrician</li>
+<li><img src="reference/figures/zk.jpg" alt="Zakaria Kehel" width="150" height="150"></li>
+</ul>
 </div>
-<div class="section level2">
-<h2 id="team">Team<a class="anchor" aria-label="anchor" href="#team"></a>
-</h2>
-
-
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>
-Team Section
-</title>
-<link rel="stylesheet" type="text/css" href="man/figures/styles.css">
-<h2 id="team-1">
-Team
-<a class="anchor" aria-label="anchor" href="#team-1"></a>
-</h2>
-<div id="team-container" class="team-container">
-<p><!-- Team members will be dynamically inserted here by JavaScript --></p>
+<div class="section level3">
+<h3 id="dr-andrea-visioni">Dr. Andrea Visioni<a class="anchor" aria-label="anchor" href="#dr-andrea-visioni"></a>
+</h3>
+<ul>
+<li>Affiliation: ICARDA Senior scientist</li>
+<li><img src="reference/figures/va.jpeg" alt="Andrea Visioni" width="150" height="150"></li>
+</ul>
 </div>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const teamContainer = document.getElementById("team-container");
-
-  const teamMembers = [
-    {
-      name: "Dr. Zakaria Kehel",
-      affiliation: "genetic resources scientist and senior biometrician",
-      img: "man/figures/zk.jpg"
-    },
-    {
-      name: "Alsamman Alsamman",
-      affiliation: "ICARDA Bioinformatics consultant",
-      img: "man/figures/ama.png"
-    }
-  ];
-
-  teamMembers.forEach(member => {
-    const memberDiv = document.createElement("div");
-    memberDiv.className = "team-member";
-
-    const img = document.createElement("img");
-    img.src = member.img;
-    img.alt = member.name;
-    img.width = 150;
-    img.height = 150;
-
-    const name = document.createElement("h3");
-    name.textContent = member.name;
-
-    const affiliation = document.createElement("p");
-    affiliation.textContent = member.affiliation;
-
-    memberDiv.appendChild(img);
-    memberDiv.appendChild(name);
-    memberDiv.appendChild(affiliation);
-
-    teamContainer.appendChild(memberDiv);
-  });
-});
-</script>
+<div class="section level3">
+<h3 id="dr-alsamman-alsamman">Dr. Alsamman Alsamman<a class="anchor" aria-label="anchor" href="#dr-alsamman-alsamman"></a>
+</h3>
+<ul>
+<li>Affiliation: ICARDA Bioinformatics consultant</li>
+<li><img src="reference/figures/ama.png" alt="Alsamman Alsamman" width="150" height="150"></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="dr-outmane-bouhlal">Dr. Outmane Bouhlal<a class="anchor" aria-label="anchor" href="#dr-outmane-bouhlal"></a>
+</h3>
+<ul>
+<li>Affiliation: ICARDA Senior scientist</li>
+<li><img src="reference/figures/ob.jpeg" alt="Outmane Bouhlal" width="150" height="150"></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="mr-khaled-helmy">Mr. Khaled Helmy<a class="anchor" aria-label="anchor" href="#mr-khaled-helmy"></a>
+</h3>
+<ul>
+<li>Affiliation: ICARDA PhD student</li>
+<li><img src="reference/figures/kh.png" alt="Khaled Helmy" width="150" height="150"></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="ms-tamara-ortiz">Ms. Tamara Ortiz<a class="anchor" aria-label="anchor" href="#ms-tamara-ortiz"></a>
+</h3>
+<ul>
+<li>Affiliation: ICARDA Bioinformatics consultant</li>
+<li><img src="reference/figures/to.jpeg" alt="Tamara Ortiz" width="150" height="150"></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="mr-doaa-korkar">Mr. Doaa Korkar<a class="anchor" aria-label="anchor" href="#mr-doaa-korkar"></a>
+</h3>
+<ul>
+<li>Affiliation: ICARDA PhD student</li>
+<li><img src="reference/figures/dk.png" alt="Doaa Korkar" width="150" height="150"></li>
+</ul>
 </div>
 </div>
-
+</div>
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
