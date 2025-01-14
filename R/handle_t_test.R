@@ -7,7 +7,10 @@ saveTTestResultsToFile <- function(t_test_snpComp) {
   # Get the phenotype name from the configuration
   phenotype_name <- get_config("phenotypename")
   outfolder <- get_config("outfolder")
-
+  # check if the outfolder is not NULL and does exist
+  if (!is.null(outfolder) && !dir.exists(outfolder)) {
+    stop("The output folder does not exist, please create it first.")
+  }
   # Convert t-test results to a data frame using merge_with_list_name
   t_test_df <- merge_with_list_name(t_test_snpComp, phenotype_name)
 

@@ -68,6 +68,9 @@ plotLDheatmap <- function(LD_matrix) {
 plotLDForClusters <- function(clusterLDs)
 {
   outfolder <- get_config("outfolder")
+  if (!dir.exists(outfolder)) {
+    stop("The output folder does not exist, please create it first.")
+  }
   # create a subfolder to save the LD matrices plots
   outfolder_sub <- file.path(outfolder, "LD_matrices_plots")
   if (!dir.exists(outfolder_sub)) {

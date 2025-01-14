@@ -9,7 +9,10 @@
 generateHapCombBoxPlots <- function(SNPcombTables, t_test_snpComp, pwidth = 6, pheight = 6) {
   # Get the output folder from the configuration
   outfolder <- get_config("outfolder")
-
+  # check if the outfolder is not NULL and does exist
+  if (!is.null(outfolder) && !dir.exists(outfolder)) {
+    stop("The output folder does not exist, please create it first.")
+  }
   # Evaluate the SNPs to three categories: significant and positive, significant and negative, not significant
   evaluated_snps <- evaluate_test_group0(t_test_snpComp)
   snps_a <- evaluated_snps %>% dplyr::filter(eval0 == TRUE & dir0 == 1) %>% dplyr::pull(snp)
@@ -23,7 +26,7 @@ generateHapCombBoxPlots <- function(SNPcombTables, t_test_snpComp, pwidth = 6, p
   save_plot <- function(cls_snp, category) {
     outdir <- dir_paths[[category]]
     HaploTraitR::plotHapCombBoxPlot(cls_snp, SNPcombTables, t_test_snpComp, outfolder = outdir)
-    ggplot2::ggsave(file.path(outdir, paste0(cls_snp, "_LD_boxplot.png")), width = pwidth, height = pheight)
+    #ggplot2::ggsave(file.path(outdir, paste0(cls_snp, "_LD_boxplot.png")), width = pwidth, height = pheight)
   }
 
   # Loop over the SNP comparisons and save the plots in the corresponding directories

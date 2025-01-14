@@ -1,24 +1,20 @@
-#' Read GWAS results file with specified columns and FDR calculation
+#' Read GWAS results file with specified columns
 #'
 #' @param gwasfile Path to the GWAS file
 #' @param header Logical, whether the file contains a header row
 #' @param sep Separator used in the file
-#' @return A data frame with the GWAS data, including calculated FDR if not present
-#' @importFrom stats p.adjust
+#' @return A data frame with the GWAS data
 #' @export
 #' @examples
 #' gwasfile <- "SignificantSNP_GWAS.csv"
-#' gwas <- readGWAS(gwasfile)
+#' gwas <- read_gwas_file(gwasfile)
 #' print(gwas)
-readGWAS <- function(gwasfile, header = TRUE, sep = "\t") {
+read_gwas_file <- function(gwasfile, header = TRUE, sep = "\t") {
   # Access configuration parameters from the environment
   rsid_col <- get_config("rsid_col")
   pos_col <- get_config("pos_col")
   chr_col <- get_config("chr_col")
   pval_col <- get_config("pval_col")
-  fdr_col <- get_config("fdr_col")
-  fdr_threshold <- get_config("fdr_threshold")
-  fdr_method <- get_config("fdr_method")
 
   # Read the GWAS file
   gwas <- read.csv(gwasfile, header = header, sep = sep)
@@ -43,6 +39,26 @@ readGWAS <- function(gwasfile, header = TRUE, sep = "\t") {
   if (!"rs" %in% colnames(gwas)) {
     gwas$rs <- paste(gwas$chr, gwas$pos, sep = ":")
   }
+
+  return(gwas)
+}
+
+#' Filter GWAS data by FDR threshold
+#'
+#' @param gwas Data frame with the GWAS data
+#' @return A list of data frames split by chromosome with filtered GWAS data
+#' @importFrom stats p.adjust
+#' @export
+#' @examples
+#' gwasfile <- "SignificantSNP_GWAS.csv"
+#' gwas <- read_gwas_file(gwasfile)
+#' filtered_gwas <- filter_gwas_data(gwas)
+#' print(filtered_gwas)
+filter_gwas_data <- function(gwas) {
+  # Access configuration parameters from the environment
+  fdr_col <- get_config("fdr_col")
+  fdr_threshold <- get_config("fdr_threshold")
+  fdr_method <- get_config("fdr_method")
 
   # Calculate FDR if the column is not present
   if (!fdr_col %in% colnames(gwas)) {

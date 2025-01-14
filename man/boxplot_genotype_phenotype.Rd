@@ -9,7 +9,8 @@ boxplot_genotype_phenotype(
   gwas,
   hapmap,
   plot_width = 5,
-  plot_height = 5
+  plot_height = 5,
+  plot_all = TRUE
 )
 }
 \arguments{
@@ -18,6 +19,12 @@ boxplot_genotype_phenotype(
 \item{gwas}{A data frame containing GWAS data}
 
 \item{hapmap}{A data frame containing hapmap data}
+
+\item{plot_width}{The width of the plot}
+
+\item{plot_height}{The height of the plot}
+
+\item{plot_all}{A boolean to plot all SNPs if FALSE or only significant SNPs if TRUE}
 }
 \value{
 A list of ggplot2 objects or NULL if outfolder is specified

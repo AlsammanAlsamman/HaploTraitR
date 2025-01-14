@@ -21,7 +21,7 @@ getDistClustersByChr <- function(gwas, hapmap, chromosome) {
 
   # Check if there are any nearby SNPs
   if (length(nearby_snps) == 0) {
-    message("No nearby SNPs found within the specified distance threshold.")
+    message(paste("No nearby SNPs found for chromosome", chromosome))
     return(NULL)
   }
 
@@ -33,7 +33,7 @@ getDistClustersByChr <- function(gwas, hapmap, chromosome) {
 
   # Check if there are any filtered clusters
   if (length(filtered_clusters) == 0) {
-    message("No clusters found with the specified minimum number of SNPs.")
+    message(paste("No filtered clusters found for chromosome", chromosome))
     return(NULL)
   }
 

@@ -3,15 +3,26 @@
 #' @param pheno A data frame containing phenotype data
 #' @param gwas A data frame containing GWAS data
 #' @param hapmap A data frame containing hapmap data
+#' @param plot_width The width of the plot
+#' @param plot_height The height of the plot
+#' @param plot_all A boolean to plot all SNPs if FALSE or only significant SNPs if TRUE
 #' @return A list of ggplot2 objects or NULL if outfolder is specified
 #' @export
 #' @import ggplot2
 #' @import ggpubr
 #' @import dplyr
-boxplot_genotype_phenotype <- function(pheno, gwas, hapmap, plot_width = 5, plot_height = 5) {
-
+boxplot_genotype_phenotype <- function(pheno, gwas, hapmap, plot_width = 5, plot_height = 5, plot_all = TRUE) {
+  # if number of phenotypes is more than 1, use the pheno_col
+  if (ncol(pheno) > 2) {
+    pheno <- pheno[, c(1, get_config("pheno_col"))]
+  }
   # Get the output folder from the config
   outfolder <- get_config("outfolder")
+  # check if the outfolder is not NULL and does exist
+  if (!is.null(outfolder) && !dir.exists(outfolder)) {
+    stop("The output folder does not exist, please create it first.")
+  }
+
   # Get the phenotype name from the config
   pheno_name <- get_config("phenotypename")
   # Ensure the output directory for boxplots exists
@@ -72,6 +83,10 @@ boxplot_genotype_phenotype <- function(pheno, gwas, hapmap, plot_width = 5, plot
       NULL
     })
 
+    # if no significant SNPs, skip plotting
+    if (is.null(stat.test) && plot_all) {
+      next
+    }
     # Create the boxplot with annotations
     p <- ggplot(sub_data, aes(x = value, y = Trait)) +
       geom_violin(aes(fill = value), alpha = 0.3) +

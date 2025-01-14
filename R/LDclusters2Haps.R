@@ -38,14 +38,18 @@ convertLDclusters2Haps <- function(hapmap, clusterLDs, savecopy=TRUE) {
 
     # Calculate the frequency of each combination
     snpsComb <- as.data.frame(table(clusterComb))
+
     totalsample <- sum(snpsComb$Freq)
     snpsComb$Freq <- snpsComb$Freq / totalsample
     snpsComb$snps <- paste(cluster, collapse = "|")
     snpsComb$chr <- chr
     snpsComb$snp <- names(clusterLDs)[i]
-
     # Remove rows with frequency less than comb_freq_threshold
     snpsComb <- snpsComb[snpsComb$Freq > comb_freq_threshold, ]
+    # if there is no combination, skip
+    if (nrow(snpsComb) == 0) {
+      next
+    }
     snpsComb$comb <- 1:nrow(snpsComb)
 
     # Append to hap_comb
@@ -61,6 +65,10 @@ convertLDclusters2Haps <- function(hapmap, clusterLDs, savecopy=TRUE) {
   # save a copy to the project folder
   if (savecopy) {
     outfolder <- get_config("outfolder")
+    if (!is.null(outfolder) && !dir.exists(outfolder)) {
+      print("The output folder does not exist, please create it first, meanwhile the haplotype combinations will not be saved.")
+      return(hap_comb)
+    }
     write.csv(hap_comb, file.path(outfolder, "hap_comb.csv"), row.names = FALSE)
     print("Haplotype combinations saved to hap_comb.csv")
   }

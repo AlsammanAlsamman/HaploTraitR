@@ -36,7 +36,10 @@ computeLDclusterByChr <- function(hapmap, haplotype_clusters, chr, cls, outfolde
 computeLDclusters <- function(hapmap, haplotype_clusters) {
   # Get the output folder from the configuration
   outfolder <- get_config("outfolder")
-
+  # check if the outfolder is not NULL and does exist
+  if (!is.null(outfolder) && !dir.exists(outfolder)) {
+    stop("The output folder does not exist, please create it first.")
+  }
   # Create the "LD_matrices" folder inside the specified output folder
   ld_folder <- file.path(outfolder, "LD_matrices")
   if (!dir.exists(ld_folder)) {
@@ -59,4 +62,33 @@ computeLDclusters <- function(hapmap, haplotype_clusters) {
   out_list <- list(ld_folder = ld_folder, out_info = out_info)
 
   return(out_list)
+}
+
+
+
+#' Get LD matrix information from a folder
+#'
+#' @param folder The folder where the LD matrices are stored
+#' @return A list containing the path to the folder with LD matrices and information about the clusters
+#' @export
+retrieveLDMatricesFromFolder <- function(folder) {
+  # Check if the folder exists
+  if (!dir.exists(folder)) {
+    stop("The specified folder does not exist.")
+  }
+
+  # List all files in the folder
+  files <- list.files(folder, full.names = TRUE)
+
+  # Extract chromosome and cluster information from file names
+  chr_cls <- do.call(rbind, strsplit(basename(files), ":"))
+  chr_cls[, 2] <- gsub("_ld_matrix.csv", "", chr_cls[, 2])
+  chr_cls[, 2] <- paste(chr_cls[, 1], chr_cls[, 2], sep = ":")
+
+  # Create LD info list
+  LD_info <- list(
+    ld_folder = folder,
+    out_info = chr_cls
+  )
+  return(LD_info)
 }

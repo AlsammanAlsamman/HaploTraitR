@@ -46,6 +46,11 @@ getHapCombSamples<-function(haplotypes, hapmap, savecopy=TRUE)
   if(savecopy)
   {
     outfolder<-get_config("outfolder")
+    # check if the outfolder is not NULL and does exist
+    if (!is.null(outfolder) && !dir.exists(outfolder)) {
+      print("The output folder does not exist, please create it first, meanwhile the haplotypes will not be saved.")
+      return(haplotypes)
+    }
     write.csv(haplotypes, file.path(outfolder, "haplotypes.csv"), row.names=FALSE)
     print("Haplotypes saved to haplotypes.csv")
   }

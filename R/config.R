@@ -18,6 +18,7 @@ initialize_config <- function() {
   .haplotraitr_env$pval_col <- "p"
   .haplotraitr_env$fdr_col <- "fdr"
   .haplotraitr_env$phenotypename <- "Phenotype"
+  .haplotraitr_env$pheno_col <- "Phenotype"
   .haplotraitr_env$phenotypeunit <- NULL
 }
 
@@ -63,3 +64,54 @@ get_config <- function(name) {
     stop(paste("Configuration parameter", name, "not found."))
   }
 }
+
+#' list all the configuration parameters
+#' @export
+list_config <- function() {
+  ls.str(.haplotraitr_env)
+}
+
+#' Save configuration to a file
+#' @param filename The name of the file to save the configuration to
+#' @export
+#' @examples
+#' save_config("config.txt")
+save_config <- function(filename) {
+  config <- as.list(.haplotraitr_env)
+  # save as text file
+  for (name in names(config)) {
+    write(paste(name, "=", config[[name]], sep = ""), file = filename, append = TRUE)
+  }
+  # save as RDS file
+  saveRDS(config, file = paste0(filename, ".rds"))
+  print("Configuration saved.")
+}
+
+#' Load configuration from a file
+#' @param filename The name of the file to load the configuration from
+#' @export
+#' @examples
+#' load_config("config.rds")
+#' load_config("config.txt")
+load_config <- function(filename) {
+  config<-list()
+  if (grepl(".rds$", filename)) {
+    config <- readRDS(filename)}
+  else if (grepl(".txt$", filename))
+  {
+    config <- read.table(filename, sep = "=", col.names = c("name", "value"), stringsAsFactors = FALSE)
+    config <- as.list(config$value)
+  }
+  set_config(config)
+  print("Configuration loaded.")
+}
+
+#' reset the configuration to default
+#' @export
+#' @examples
+#' reset_config()
+reset_config <- function() {
+  initialize_config()
+  print("Configuration reset to default.")
+}
+

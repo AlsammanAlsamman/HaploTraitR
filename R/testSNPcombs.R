@@ -6,41 +6,50 @@
 #' @importFrom rstatix add_xy_position
 #' @importFrom dplyr mutate
 #' @export
-testSNPcombs <- function(comb_sample_Tables, savecopy=TRUE) {
-  snp_clss<-unique(comb_sample_Tables$SNP)
-  snp_test_results<-list()
-  snp_cls_names<-c()
-  for (snp_cls in snp_clss)
-  {
-    pheno_data<-comb_sample_Tables[comb_sample_Tables$SNP==snp_cls,]
-    pheno_data$comb<-as.factor(pheno_data$comb)
-    # Perform statistical test if there are enough samples
+testSNPcombs <- function(comb_sample_Tables, savecopy = TRUE) {
+
+  snp_clss <- unique(comb_sample_Tables$SNP)
+  snp_test_results <- list()
+  snp_cls_names <- c()
+
+  for (snp_cls in snp_clss) {
+    pheno_data <- comb_sample_Tables[comb_sample_Tables$SNP == snp_cls, ]
+    pheno_data$comb <- as.factor(pheno_data$comb)
+
     tryCatch({
-      # Ensure there are at least two levels in "Comb" and sufficient data for testing
       if (length(unique(pheno_data$comb)) > 1 && nrow(pheno_data) > 2) {
         stat.test <- t_test(pheno_data, Pheno ~ comb)
-        stat.test <-  add_xy_position(stat.test, x = "Pheno")
-        # Set xmin and xmax based on the group1 and group2 column values
-        stat.test <-
-          mutate(stat.test, xmin = as.numeric(factor(group1, levels = levels(pheno_data$comb))),
-                 xmax = as.numeric(factor(group2, levels = levels(pheno_data$comb))))
+        print(stat.test)  # Debug statement to print the t_test result
+
+        # Ensure the p.adj column exists before proceeding
+        if (!"p.adj" %in% colnames(stat.test)) {
+          # skip this SNP combination if p.adj column is missing
+          next
+        }
+
+        stat.test <- add_xy_position(stat.test, x = "Pheno")
+        stat.test <- mutate(stat.test, xmin = as.numeric(factor(group1, levels = levels(pheno_data$comb))),
+                            xmax = as.numeric(factor(group2, levels = levels(pheno_data$comb))))
         stat.test$snp <- snp_cls
+
         if (nrow(stat.test) > 0) {
           snp_test_results <- append(snp_test_results, list(stat.test))
-          snp_cls_name<-snp_cls
-          snp_cls_names<-append(snp_cls_names, snp_cls_name)
+          snp_cls_names <- append(snp_cls_names, snp_cls)
         }
       }
     }, error = function(e) {
       message(paste("Error in SNP", snp_cls, ": ", e$message))
     })
   }
-  # check that the names are correct
+  # if no results, return NULL
+  if (length(snp_test_results) == 0) {
+    return(NULL)
+  }
+
   names(snp_test_results) <- snp_cls_names
-  if(savecopy)
-  {
+  if (savecopy) {
     saveTTestResultsToFile(snp_test_results)
   }
+
   return(snp_test_results)
 }
-
