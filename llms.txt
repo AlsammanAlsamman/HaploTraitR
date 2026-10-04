@@ -1,0 +1,340 @@
+# HaploTraitR
+
+![HaploTraitR logo](icon/logo_2.png)
+
+**From GWAS hits to breeding decisions.**  
+Haplotype-based trait analysis for plant breeders, in one R function
+call.
+
+![Version](https://img.shields.io/badge/version-0.2.0-4575B4?style=flat-square)![R](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?style=flat-square&logo=r&logoColor=white)![License](https://img.shields.io/badge/license-MIT-1A9850?style=flat-square)![Dependencies](https://img.shields.io/badge/dependencies-3-7B61C9?style=flat-square)![No
+compiler
+needed](https://img.shields.io/badge/compiler-not%20needed-E8702A?style=flat-square)![ICARDA](https://img.shields.io/badge/developed%20at-ICARDA-2C6E7F?style=flat-square)
+
+[How it works](#-how-it-works) • [Installation](#-installation) • [Quick
+start](#-quick-start) • [What you get](#-what-you-get) • [Reading the
+results](#-how-to-read-the-results) • [Team](#-team)
+
+------------------------------------------------------------------------
+
+## ✨ Why HaploTraitR?
+
+GWAS points to single SNPs. Breeders select on **haplotypes**, the
+combinations of alleles inherited together. HaploTraitR bridges the two
+and answers the questions a breeder asks next:
+
+[TABLE]
+
+## 🔎 How it works
+
+![HaploTraitR workflow](reference/figures/haplotraitr_workflow.png)
+
+## 📦 Installation
+
+``` r
+
+install.packages("remotes")
+remotes::install_github("AlsammanAlsamman/HaploTraitR")
+```
+
+> \[!TIP\] HaploTraitR uses only **ggplot2**, **openxlsx** and **cli**
+> (which comes with ggplot2). It has no compiled code, so it installs on
+> Windows, macOS and Linux without Rtools or a compiler.
+
+## 🚀 Quick start
+
+``` r
+
+library(HaploTraitR)
+
+results <- run_haplotraitr(
+  gwas      = "my_gwas_results.csv",   # marker, chromosome, position, p-value
+  genotypes = "my_genotypes.hmp.txt",  # HapMap (.hmp.txt) or VCF (.vcf / .vcf.gz)
+  pheno     = "my_phenotypes.tsv",     # first column = accession, then one column per trait
+  trait     = "Yield",
+  unit      = "t/ha",
+  outfolder = "results_yield",
+  higher_is_better = TRUE              # FALSE for e.g. disease scores or days to heading
+)
+```
+
+**Try it now** with the barley example data that ships with the package:
+
+``` r
+
+ex <- function(f) system.file("extdata", f, package = "HaploTraitR")
+
+results <- run_haplotraitr(
+  gwas = ex("gwas_area_ann19.csv.gz"), genotypes = ex("Barley_50K.tsv.gz"),
+  pheno = ex("area_ann19.tsv"), trait = "Area", unit = "cm2",
+  outfolder = "barley_example", config = list(fdr_threshold = 0.1)
+)
+```
+
+The console guides you through every step and ends with a colour-coded
+summary:
+
+![Console output](reference/figures/example_console.png)
+
+**My GWAS file uses other column names**
+
+  
+
+Tell HaploTraitR which columns to use:
+
+``` r
+
+run_haplotraitr(..., config = list(rsid_col = "Marker", chr_col = "Chr",
+                                   pos_col = "Pos", pval_col = "P.value"))
+```
+
+**I have several traits**
+
+  
+
+Call
+[`run_haplotraitr()`](https://alsammanalsamman.github.io/HaploTraitR/reference/run_haplotraitr.md)
+once per trait, each with its own GWAS file and output folder:
+
+``` r
+
+for (trait in c("Yield", "Height", "Heading")) {
+  run_haplotraitr(gwas = paste0("gwas_", trait, ".csv"), genotypes = "panel.hmp.txt",
+                  pheno = "traits.tsv", trait = trait, outfolder = paste0("results_", trait),
+                  higher_is_better = trait != "Heading")
+}
+```
+
+## 📊 What you get
+
+Everything is written to your output folder. **Start with the Excel
+report.**
+
+|  | Output | What it shows |
+|:--:|----|----|
+| 📗 | `HaploTraitR_<trait>.xlsx` | Formatted report with superior haplotypes highlighted, see the sheets below |
+| 🗺️ | `plots/genome_overview` | Manhattan plot with the haplotype blocks highlighted |
+| 📈 | `plots/haplotype_effects_summary` | Effect of every haplotype in every block (% vs population mean) |
+| 🌱 | `plots/candidate_accessions` | Top accessions and the superior haplotypes they carry |
+| 🧬 | `plots/haplotype_blocks/` | Per block: haplotype alleles, trait mean ± 95% CI and the LD heat map |
+| 🎻 | `plots/haplotype_trait_plots/` | Per block: trait distribution of each haplotype with letter groups |
+| 🔬 | `plots/gwas_snp_plots/` | Per GWAS SNP: trait distribution of each genotype |
+| 🗂️ | `tables/`, `LD_matrices/`, `parameters.txt` | CSV copies of all tables, LD matrices and the settings used |
+
+**Excel report sheets**
+
+  
+
+| Sheet | Content |
+|----|----|
+| **Read me** | What each sheet contains and how to interpret it |
+| **Block summary** | One row per block: superior haplotype, effect, evidence and a **recommendation** |
+| **Haplotype effects** | Accessions, frequency, mean, 95% CI, difference vs population and **letter groups** |
+| **Haplotype alleles** | The allele of each haplotype at each SNP |
+| **Diagnostic markers** | SNPs that tag the superior haplotype; *fully diagnostic* ones are KASP candidates |
+| **Candidate accessions** | The haplotype every accession carries, ranked by superior haplotypes carried |
+| **Pairwise tests** · **GWAS SNPs** · **Parameters** | Full statistics, the GWAS SNPs used and the settings |
+
+### Gallery
+
+[TABLE]
+
+## 📖 How to read the results
+
+| Term | Meaning |
+|----|----|
+| **H1, H2, …** | Allele combinations carried by at least `comb_freq_threshold` (10%) of the accessions; H1 is the most frequent |
+| **Other** | Rare combinations, plus accessions with too many missing calls |
+| **Letter groups** | Haplotypes sharing a letter do not differ significantly; **a** is the best group |
+| **Evidence: Strong** | The superior haplotype is significantly better than *every* other haplotype |
+| **Evidence: Moderate** | It is significantly better than *some* of the others |
+| **Evidence: None** | No significant difference: low priority for selection |
+
+> \[!NOTE\] If **Other** is the best group, the favourable variant is a
+> rare haplotype. Lower `comb_freq_threshold` (for example `0.05`) to
+> separate it.
+
+## ⚙️ Settings
+
+**All settings** (see them in R with `list_config()`)
+
+  
+
+Change settings with
+[`set_config()`](https://alsammanalsamman.github.io/HaploTraitR/reference/set_config.md)
+or with the `config` argument of
+[`run_haplotraitr()`](https://alsammanalsamman.github.io/HaploTraitR/reference/run_haplotraitr.md).
+
+| Parameter | Default | Meaning |
+|----|----|----|
+| `fdr_threshold` | 0.05 | FDR threshold used to select significant GWAS SNPs |
+| `dist_threshold` | 1000000 | Window (bp) around each GWAS SNP |
+| `dist_cluster_count` | 5 | Minimum number of SNPs in a window / block |
+| `ld_threshold` | 0.3 | Minimum LD (r²) to link SNPs into a block |
+| `comb_freq_threshold` | 0.1 | Minimum frequency of a haplotype |
+| `hap_max_missing` | 0.2 | Maximum fraction of missing calls when assigning an accession to a haplotype |
+| `t_test_method` | `"t.test"` | `"t.test"` (Welch) or `"wilcox.test"` |
+| `p_adjust_method` | `"holm"` | Correction for pairwise haplotype tests |
+| `t_test_threshold` | 0.05 | Significance level |
+| `higher_is_better` | `TRUE` | Direction of the favourable trait value |
+| `plot_format` / `plot_dpi` | `"png"` / 300 | Plot file format and resolution |
+
+**Step-by-step workflow** (for advanced users)
+
+  
+
+Every step of
+[`run_haplotraitr()`](https://alsammanalsamman.github.io/HaploTraitR/reference/run_haplotraitr.md)
+is available on its own:
+
+``` r
+
+library(HaploTraitR)
+set_config(list(phenotypename = "Area", phenotypeunit = "cm2", fdr_threshold = 0.1,
+                outfolder = create_unique_result_folder(location = "sampleout")))
+ex <- function(f) system.file("extdata", f, package = "HaploTraitR")
+
+gwas      <- read_gwas_file(ex("gwas_area_ann19.csv.gz"))
+hapmap    <- readHapmap(ex("Barley_50K.tsv.gz"))            # or readVCF("file.vcf.gz")
+pheno     <- read.delim(ex("area_ann19.tsv"))
+
+gwas_sig  <- filter_gwas_data(gwas)                          # significant GWAS SNPs
+windows   <- getDistClusters(gwas_sig, hapmap)               # SNPs near each GWAS SNP
+LDsInfo   <- computeLDclusters(hapmap, windows)              # LD (r2) matrices
+blocks    <- getLDclusters(LDsInfo)                          # LD blocks
+haps      <- convertLDclusters2Haps(hapmap, blocks)          # haplotypes per block
+haps      <- getHapCombSamples(haps, hapmap)                 # accessions per haplotype
+acc       <- getSNPcombTables(haps, pheno)                   # accession x haplotype x trait
+tests     <- testSNPcombs(acc)                               # pairwise haplotype tests
+summary   <- summarize_haplotypes(haps, acc, tests)          # effects, superior haplotypes
+markers   <- diagnostic_markers(haps, summary)               # markers for MAS
+ranking   <- rank_accessions(haps, pheno, summary)           # candidate parents
+
+plot_haplotype_block("2H:582673984", haps, summary)          # one block (by block id or GWAS SNP)
+plotHapCombBoxPlot("2H:582673984", acc, tests)               # trait by haplotype
+plot_effect_summary(summary)
+plot_candidate_accessions(ranking, summary)
+plot_haplotypes_genome(gwas, haps, summary = summary)
+```
+
+**Method notes**
+
+  
+
+- **LD** is the squared correlation (r²) between allele dosages, the
+  standard unphased r².
+- **Blocks:** SNPs within `dist_threshold` of a GWAS SNP are linked when
+  r² ≥ `ld_threshold`. The connected group that contains the GWAS SNP is
+  its block. GWAS SNPs that share a block are analysed once.
+- **Haplotypes** are allele combinations above `comb_freq_threshold`. An
+  accession with a few missing calls (up to `hap_max_missing`) is
+  assigned to the single haplotype that matches its observed alleles.
+- **Tests:** Welch ANOVA (or Kruskal–Wallis) per block, then pairwise
+  Welch t-tests (or Wilcoxon tests) with `p_adjust_method` correction.
+  Letter groups use the insert-and-absorb algorithm.
+- The workflow diagram is drawn with JavaScript in
+  `tools/flowchart/flowchart.html`. Regenerate the PNG with
+  `tools/flowchart/render.sh`.
+
+## 👥 Team
+
+[TABLE]
+
+## 📝 Citation
+
+If HaploTraitR helps your research, please cite:
+
+    Alsamman A, Ortiz T, Helmy K, Kehel Z (2025). HaploTraitR: Haplotype-Based Trait Analysis
+    for Plant Breeding. R package version 0.2.0. https://github.com/AlsammanAlsamman/HaploTraitR
+
+_(Developed at **ICARDA** · Released under the MIT license)
+
+# Package index
+
+## All functions
+
+- [`barley_area`](https://alsammanalsamman.github.io/HaploTraitR/reference/barley_area.md)
+  : Barley leaf area example data
+- [`boxplot_genotype_phenotype()`](https://alsammanalsamman.github.io/HaploTraitR/reference/boxplot_genotype_phenotype.md)
+  : Generate boxplots of the trait for each significant GWAS SNP
+- [`computeLDclusters()`](https://alsammanalsamman.github.io/HaploTraitR/reference/computeLDclusters.md)
+  : Compute LD matrices for the distance clusters
+- [`convertGenoBi2Numeric()`](https://alsammanalsamman.github.io/HaploTraitR/reference/convertGenoBi2Numeric.md)
+  : Convert HapMap genotypes to allele dosages
+- [`convertLDclusters2Haps()`](https://alsammanalsamman.github.io/HaploTraitR/reference/convertLDclusters2Haps.md)
+  : Convert LD clusters to haplotypes
+- [`create_unique_result_folder()`](https://alsammanalsamman.github.io/HaploTraitR/reference/create_unique_result_folder.md)
+  : Create a unique result folder for HaploTraitR
+- [`diagnostic_markers()`](https://alsammanalsamman.github.io/HaploTraitR/reference/diagnostic_markers.md)
+  : Find diagnostic SNPs for the superior haplotypes
+- [`extract_hapmap()`](https://alsammanalsamman.github.io/HaploTraitR/reference/extract_hapmap.md)
+  : Extract HapMap data for significant SNPs
+- [`filter_gwas_data()`](https://alsammanalsamman.github.io/HaploTraitR/reference/filter_gwas_data.md)
+  : Filter GWAS data by FDR threshold
+- [`find_nearby_snps()`](https://alsammanalsamman.github.io/HaploTraitR/reference/find_nearby_snps.md)
+  : Find nearby SNPs to a given SNP list assuming they are in the same
+  chromosome
+- [`generateHapCombBoxPlots()`](https://alsammanalsamman.github.io/HaploTraitR/reference/generateHapCombBoxPlots.md)
+  : Generate and save the haplotype trait plots of all blocks
+- [`getDistClusters()`](https://alsammanalsamman.github.io/HaploTraitR/reference/getDistClusters.md)
+  : Get distance clusters around the significant GWAS SNPs
+- [`getHapCombSamples()`](https://alsammanalsamman.github.io/HaploTraitR/reference/getHapCombSamples.md)
+  : Assign accessions to haplotypes
+- [`getLDclusters()`](https://alsammanalsamman.github.io/HaploTraitR/reference/getLDclusters.md)
+  : Cluster SNPs based on LD matrices
+- [`getSNPcombTables()`](https://alsammanalsamman.github.io/HaploTraitR/reference/getSNPcombTables.md)
+  : Build the accession-level haplotype and phenotype table
+- [`get_config()`](https://alsammanalsamman.github.io/HaploTraitR/reference/get_config.md)
+  : Get a configuration parameter
+- [`get_pheno_geno()`](https://alsammanalsamman.github.io/HaploTraitR/reference/get_pheno_geno.md)
+  : Get the phenotype and genotype data
+- [`list_config()`](https://alsammanalsamman.github.io/HaploTraitR/reference/list_config.md)
+  : List all the configuration parameters
+- [`load_config()`](https://alsammanalsamman.github.io/HaploTraitR/reference/load_config.md)
+  : Load configuration from a file
+- [`plotCombMatrix()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plotCombMatrix.md)
+  : Plot the haplotype allele matrix of a block
+- [`plotHapCombBoxPlot()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plotHapCombBoxPlot.md)
+  : Plot the trait distribution of each haplotype
+- [`plotLDCombMatrix()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plotLDCombMatrix.md)
+  : Plot LD and haplotype matrices of all blocks
+- [`plotLDForClusters()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plotLDForClusters.md)
+  : Plot LD heat maps for all LD blocks
+- [`plotLDheatmap()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plotLDheatmap.md)
+  : Plot an LD heat map
+- [`plot_candidate_accessions()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plot_candidate_accessions.md)
+  : Plot the best candidate accessions
+- [`plot_effect_summary()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plot_effect_summary.md)
+  : Plot the haplotype effects of all blocks
+- [`plot_haplotype_block()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plot_haplotype_block.md)
+  : Plot a haplotype block: alleles, trait effects and LD
+- [`plot_haplotypes_genome()`](https://alsammanalsamman.github.io/HaploTraitR/reference/plot_haplotypes_genome.md)
+  : Plot the haplotype blocks across the genome
+- [`prepare_pheno()`](https://alsammanalsamman.github.io/HaploTraitR/reference/prepare_pheno.md)
+  : Prepare phenotype data
+- [`rank_accessions()`](https://alsammanalsamman.github.io/HaploTraitR/reference/rank_accessions.md)
+  : Rank accessions by the superior haplotypes they carry
+- [`readHapmap()`](https://alsammanalsamman.github.io/HaploTraitR/reference/readHapmap.md)
+  : Read a HapMap genotype file
+- [`readVCF()`](https://alsammanalsamman.github.io/HaploTraitR/reference/readVCF.md)
+  : Read a VCF file into HapMap format
+- [`read_gwas_file()`](https://alsammanalsamman.github.io/HaploTraitR/reference/read_gwas_file.md)
+  : Read GWAS results file with specified columns
+- [`reset_config()`](https://alsammanalsamman.github.io/HaploTraitR/reference/reset_config.md)
+  : Reset the configuration to default
+- [`retrieveLDMatricesFromFolder()`](https://alsammanalsamman.github.io/HaploTraitR/reference/retrieveLDMatricesFromFolder.md)
+  : Get LD matrix information from a folder
+- [`run_haplotraitr()`](https://alsammanalsamman.github.io/HaploTraitR/reference/run_haplotraitr.md)
+  : Run the complete HaploTraitR analysis
+- [`saveTTestResultsToFile()`](https://alsammanalsamman.github.io/HaploTraitR/reference/saveTTestResultsToFile.md)
+  : Save the haplotype test results to a file
+- [`save_config()`](https://alsammanalsamman.github.io/HaploTraitR/reference/save_config.md)
+  : Save configuration to a file
+- [`set_config()`](https://alsammanalsamman.github.io/HaploTraitR/reference/set_config.md)
+  : Set configuration parameters for HaploTraitR
+- [`summarize_haplotypes()`](https://alsammanalsamman.github.io/HaploTraitR/reference/summarize_haplotypes.md)
+  : Summarise haplotype effects for breeders
+- [`testSNPcombs()`](https://alsammanalsamman.github.io/HaploTraitR/reference/testSNPcombs.md)
+  : Test trait differences between haplotypes
+- [`write_excel_report()`](https://alsammanalsamman.github.io/HaploTraitR/reference/write_excel_report.md)
+  : Write the HaploTraitR results to a formatted Excel workbook
+
