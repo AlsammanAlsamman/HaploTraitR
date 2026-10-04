@@ -1,0 +1,451 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "team.js",
+      "file_type": "code",
+      "source_file": "team.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "team",
+      "community": 3,
+      "norm_label": "team.js"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme",
+      "community": 0,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "HaploTraitR <img src=\"icon/logo.png\" align=\"right\" width=\"120\"/>",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "community": 0,
+      "norm_label": "haplotraitr <img src=\"icon/logo.png\" align=\"right\" width=\"120\"/>"
+    },
+    {
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "readme_installation",
+      "community": 0,
+      "norm_label": "installation"
+    },
+    {
+      "label": "Quick start: one function call",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "readme_quick_start_one_function_call",
+      "community": 0,
+      "norm_label": "quick start: one function call"
+    },
+    {
+      "label": "What you get",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L70",
+      "_origin": "ast",
+      "id": "readme_what_you_get",
+      "community": 0,
+      "norm_label": "what you get"
+    },
+    {
+      "label": "How to read the results",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "readme_how_to_read_the_results",
+      "community": 0,
+      "norm_label": "how to read the results"
+    },
+    {
+      "label": "Example output",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L104",
+      "_origin": "ast",
+      "id": "readme_example_output",
+      "community": 2,
+      "norm_label": "example output"
+    },
+    {
+      "label": "Haplotype block: alleles, trait effect and LD",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L106",
+      "_origin": "ast",
+      "id": "readme_haplotype_block_alleles_trait_effect_and_ld",
+      "community": 2,
+      "norm_label": "haplotype block: alleles, trait effect and ld"
+    },
+    {
+      "label": "Trait by haplotype",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L109",
+      "_origin": "ast",
+      "id": "readme_trait_by_haplotype",
+      "community": 2,
+      "norm_label": "trait by haplotype"
+    },
+    {
+      "label": "Haplotype effects across blocks",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L112",
+      "_origin": "ast",
+      "id": "readme_haplotype_effects_across_blocks",
+      "community": 2,
+      "norm_label": "haplotype effects across blocks"
+    },
+    {
+      "label": "Genome overview",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L115",
+      "_origin": "ast",
+      "id": "readme_genome_overview",
+      "community": 2,
+      "norm_label": "genome overview"
+    },
+    {
+      "label": "Settings",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L118",
+      "_origin": "ast",
+      "id": "readme_settings",
+      "community": 0,
+      "norm_label": "settings"
+    },
+    {
+      "label": "Step-by-step workflow (advanced)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L136",
+      "_origin": "ast",
+      "id": "readme_step_by_step_workflow_advanced",
+      "community": 0,
+      "norm_label": "step-by-step workflow (advanced)"
+    },
+    {
+      "label": "Method notes",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L169",
+      "_origin": "ast",
+      "id": "readme_method_notes",
+      "community": 0,
+      "norm_label": "method notes"
+    },
+    {
+      "label": "Team Members",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L175",
+      "_origin": "ast",
+      "id": "readme_team_members",
+      "community": 1,
+      "norm_label": "team members"
+    },
+    {
+      "label": "Dr. Zakaria Kehel",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L177",
+      "_origin": "ast",
+      "id": "readme_dr_zakaria_kehel",
+      "community": 1,
+      "norm_label": "dr. zakaria kehel"
+    },
+    {
+      "label": "Dr. Andrea Visioni",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L181",
+      "_origin": "ast",
+      "id": "readme_dr_andrea_visioni",
+      "community": 1,
+      "norm_label": "dr. andrea visioni"
+    },
+    {
+      "label": "Dr. Alsamman Alsamman",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L185",
+      "_origin": "ast",
+      "id": "readme_dr_alsamman_alsamman",
+      "community": 1,
+      "norm_label": "dr. alsamman alsamman"
+    },
+    {
+      "label": "Dr. Outmane Bouhlal",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L189",
+      "_origin": "ast",
+      "id": "readme_dr_outmane_bouhlal",
+      "community": 1,
+      "norm_label": "dr. outmane bouhlal"
+    },
+    {
+      "label": "Mr. Khaled Helmy",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L193",
+      "_origin": "ast",
+      "id": "readme_mr_khaled_helmy",
+      "community": 1,
+      "norm_label": "mr. khaled helmy"
+    },
+    {
+      "label": "Ms. Tamara Ortiz",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L197",
+      "_origin": "ast",
+      "id": "readme_ms_tamara_ortiz",
+      "community": 1,
+      "norm_label": "ms. tamara ortiz"
+    },
+    {
+      "label": "Mr. Doaa Korkar",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L201",
+      "_origin": "ast",
+      "id": "readme_mr_doaa_korkar",
+      "community": 1,
+      "norm_label": "mr. doaa korkar"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme",
+      "target": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L100",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_example_output"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L90",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_how_to_read_the_results"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_installation"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L165",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_method_notes"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_quick_start_one_function_call"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L114",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_settings"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L132",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_step_by_step_workflow_advanced"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L171",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_team_members"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L66",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_haplotraitr_img_src_icon_logo_png_align_right_width_120",
+      "target": "readme_what_you_get"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L111",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_example_output",
+      "target": "readme_genome_overview"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L102",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_example_output",
+      "target": "readme_haplotype_block_alleles_trait_effect_and_ld"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L108",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_example_output",
+      "target": "readme_haplotype_effects_across_blocks"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L105",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_example_output",
+      "target": "readme_trait_by_haplotype"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L181",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_team_members",
+      "target": "readme_dr_alsamman_alsamman"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L177",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_team_members",
+      "target": "readme_dr_andrea_visioni"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L185",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_team_members",
+      "target": "readme_dr_outmane_bouhlal"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L173",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_team_members",
+      "target": "readme_dr_zakaria_kehel"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L197",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_team_members",
+      "target": "readme_mr_doaa_korkar"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L189",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_team_members",
+      "target": "readme_mr_khaled_helmy"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L193",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_team_members",
+      "target": "readme_ms_tamara_ortiz"
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "9c1bf1424021185c711e42e5ea27c30dd4fc1989"
+}

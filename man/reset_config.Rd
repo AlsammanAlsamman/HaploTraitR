@@ -2,12 +2,15 @@
 % Please edit documentation in R/config.R
 \name{reset_config}
 \alias{reset_config}
-\title{reset the configuration to default}
+\title{Reset the configuration to default}
 \usage{
 reset_config()
 }
+\value{
+Invisibly `NULL`.
+}
 \description{
-reset the configuration to default
+Reset the configuration to default
 }
 \examples{
 reset_config()

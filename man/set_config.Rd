@@ -7,12 +7,16 @@
 set_config(config = list())
 }
 \arguments{
-\item{config}{A named list of configuration parameters.}
+\item{config}{A named list of configuration parameters. See [list_config()]
+for the available parameters.}
+}
+\value{
+Invisibly, the previous values of the changed parameters.
 }
 \description{
 Set configuration parameters for HaploTraitR
 }
 \examples{
-config <- list(dist_threshold = 2000000, dist_cluster_count = 10)
-set_config(config)
+set_config(list(dist_threshold = 2000000, dist_cluster_count = 10))
+reset_config()
 }

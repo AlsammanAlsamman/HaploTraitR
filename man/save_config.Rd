@@ -7,11 +7,16 @@
 save_config(filename)
 }
 \arguments{
-\item{filename}{The name of the file to save the configuration to}
+\item{filename}{The name of the text file to save the configuration to}
+}
+\value{
+Invisibly, the file name.
 }
 \description{
-Save configuration to a file
+Writes a human-readable `name=value` text file and an `.rds` copy that
+preserves the value types.
 }
 \examples{
-save_config("config.txt")
+f <- tempfile(fileext = ".txt")
+save_config(f)
 }

@@ -2,10 +2,17 @@
 % Please edit documentation in R/config.R
 \name{list_config}
 \alias{list_config}
-\title{list all the configuration parameters}
+\title{List all the configuration parameters}
 \usage{
 list_config()
 }
+\value{
+A data frame with the parameter names, current values and descriptions
+  (printed and returned invisibly).
+}
 \description{
-list all the configuration parameters
+List all the configuration parameters
+}
+\examples{
+list_config()
 }

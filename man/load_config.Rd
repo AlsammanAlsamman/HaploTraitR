@@ -7,12 +7,16 @@
 load_config(filename)
 }
 \arguments{
-\item{filename}{The name of the file to load the configuration from}
+\item{filename}{A file written by [save_config()] (`.txt` or `.rds`).}
+}
+\value{
+Invisibly, the loaded configuration list.
 }
 \description{
 Load configuration from a file
 }
 \examples{
-load_config("config.rds")
-load_config("config.txt")
+f <- tempfile(fileext = ".txt")
+save_config(f)
+load_config(f)
 }

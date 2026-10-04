@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HaploTraitR workflow</title>
+<!--
+  HaploTraitR workflow diagram.
+  The diagram is drawn as SVG by the script below. Render it to PNG with
+  tools/flowchart/render.sh (headless Chrome).
+-->
+<style>
+  html, body { margin: 0; background: #ffffff; }
+  svg { display: block; }
+  text { font-family: "Lato", "Noto Sans", "DejaVu Sans", sans-serif; }
+  .mono { font-family: "DejaVu Sans Mono", "Menlo", monospace; }
+</style>
+</head>
+<body>
+<svg id="chart" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+// ---------------------------------------------------------------------------
+// Content
+// ---------------------------------------------------------------------------
+const PHASES = {
+  prepare: { name: "PREPARE", color: "#4575B4", light: "#EAF1FB" },
+  build:   { name: "BUILD HAPLOTYPES", color: "#7B61C9", light: "#F1EDFB" },
+  test:    { name: "TEST", color: "#E8702A", light: "#FDF0E7" },
+  decide:  { name: "DECIDE", color: "#1A9850", light: "#E8F6EE" }
+};
+
+const INPUTS = [
+  { title: "GWAS results", text: "Marker, chromosome, position and p-value of every SNP", file: "gwas.csv", color: "#4575B4", icon: "manhattan" },
+  { title: "Genotypes", text: "SNP calls of every accession (HapMap or VCF)", file: "panel.hmp.txt / .vcf.gz", color: "#7B61C9", icon: "matrix" },
+  { title: "Phenotypes", text: "One row per accession, one column per trait", file: "traits.tsv", color: "#E8702A", icon: "plant" }
+];
+
+const STEPS = [
+  { phase: "prepare", title: "Read and clean the data",
+    text: "Genotype calls are standardised (A → AA, R → AG, N → missing), replicated measurements are averaged and accession names are matched across files.",
+    fns: "read_gwas_file()  readHapmap()  readVCF()  prepare_pheno()", chips: [], icon: "clean" },
+  { phase: "prepare", title: "Select significant GWAS SNPs",
+    text: "SNPs that pass the false discovery rate threshold become the anchors of the haplotype blocks.",
+    fns: "filter_gwas_data()", chips: ["fdr_threshold = 0.05"], icon: "manhattan" },
+  { phase: "build", title: "Collect neighbouring SNPs",
+    text: "All genotyped SNPs within a window around each anchor SNP are gathered.",
+    fns: "getDistClusters()", chips: ["dist_threshold = 1 Mb", "dist_cluster_count = 5"], icon: "window" },
+  { phase: "build", title: "Build LD blocks",
+    text: "Pairwise LD (r²) is computed; SNPs linked at r² ≥ 0.3 form the block of each anchor. Anchors sharing a block are analysed once.",
+    fns: "computeLDclusters()  getLDclusters()", chips: ["ld_threshold = 0.3"], icon: "ld" },
+  { phase: "build", title: "Define haplotypes",
+    text: "Allele combinations carried by ≥ 10% of accessions become H1, H2, …; rare ones are pooled as “Other”. Each accession is assigned to its haplotype, tolerating a few missing calls.",
+    fns: "convertLDclusters2Haps()  getHapCombSamples()", chips: ["comb_freq_threshold = 0.1", "hap_max_missing = 0.2"], icon: "haps" },
+  { phase: "test", title: "Test haplotype effects on the trait",
+    text: "Welch ANOVA per block, pairwise Welch t-tests with Holm correction, 95% confidence intervals and letter groups (a, b, c).",
+    fns: "testSNPcombs()  summarize_haplotypes()", chips: ["t_test_method = \"t.test\"", "p_adjust_method = \"holm\"", "higher_is_better = TRUE"], icon: "violin" }
+];
+
+const DECISIONS = [
+  { title: "Superior haplotypes", text: "Best haplotype of each block, its gain over the population mean and the strength of evidence", fn: "summarize_haplotypes()", icon: "trophy" },
+  { title: "Diagnostic markers", text: "SNPs whose allele tags the superior haplotype: ready for KASP and marker-assisted selection", fn: "diagnostic_markers()", icon: "marker" },
+  { title: "Candidate parents", text: "Accessions ranked by the number of superior haplotypes they carry", fn: "rank_accessions()", icon: "parents" }
+];
+
+const OUTPUTS = [
+  { title: "Excel report", text: "Block summary with recommendations, haplotype effects, alleles, markers, candidate accessions, tests" },
+  { title: "Publication-ready plots", text: "Genome overview, block figures (alleles + effects + LD), trait plots, effect summary" },
+  { title: "CSV tables", text: "Every table as CSV, plus LD matrices and the settings used" }
+];
+
+// ---------------------------------------------------------------------------
+// SVG helpers
+// ---------------------------------------------------------------------------
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("chart");
+const W = 1400;
+
+function el(name, attrs = {}, parent = svg) {
+  const node = document.createElementNS(NS, name);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  parent.appendChild(node);
+  return node;
+}
+
+function text(x, y, str, attrs = {}, parent = svg) {
+  const t = el("text", Object.assign({ x, y }, attrs), parent);
+  t.textContent = str;
+  return t;
+}
+
+// Wrap a string into lines no wider than maxWidth (measured in the browser)
+function wrap(str, maxWidth, attrs) {
+  const probe = text(-1000, -1000, "", attrs);
+  const words = str.split(" ");
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    const candidate = line ? line + " " + w : w;
+    probe.textContent = candidate;
+    if (probe.getComputedTextLength() > maxWidth && line) {
+      lines.push(line);
+      line = w;
+    } else {
+      line = candidate;
+    }
+  }
+  if (line) lines.push(line);
+  probe.remove();
+  return lines;
+}
+
+function multiline(x, y, lines, lineHeight, attrs, parent = svg) {
+  lines.forEach((l, i) => text(x, y + i * lineHeight, l, attrs, parent));
+  return lines.length * lineHeight;
+}
+
+function shadowRect(x, y, w, h, r, fill, stroke) {
+  el("rect", { x, y, width: w, height: h, rx: r, fill, stroke: stroke || "none", "stroke-width": 1.2, filter: "url(#shadow)" });
+}
+
+function arrow(x1, y1, x2, y2, color = "#94A3B8") {
+  const my = (y1 + y2) / 2;
+  const d = x1 === x2 ? `M${x1},${y1} L${x2},${y2 - 2}` : `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2 - 2}`;
+  el("path", { d, fill: "none", stroke: color, "stroke-width": 2.4, "marker-end": "url(#arrow)" });
+}
+
+function chip(x, y, label, color) {
+  const attrs = { class: "mono", "font-size": 12.5, fill: color };
+  const t = text(x + 10, y + 16, label, attrs);
+  const w = t.getComputedTextLength() + 20;
+  const r = el("rect", { x, y, width: w, height: 23, rx: 11.5, fill: "#ffffff", stroke: color, "stroke-width": 1.2, "stroke-opacity": 0.55 });
+  svg.insertBefore(r, t);
+  return w;
+}
+
+// ---------------------------------------------------------------------------
+// Mini illustrations (drawn in a box of size w x h at x, y)
+// ---------------------------------------------------------------------------
+function icon(kind, x, y, w, h, color) {
+  const g = el("g", { transform: `translate(${x},${y})` });
+  const c = color;
+  if (kind === "manhattan") {
+    const heights = [10, 18, 12, 26, 14, 9, 22, 58, 70, 40, 16, 11, 20, 15, 30, 12, 9, 17, 13, 24];
+    heights.forEach((v, i) => {
+      el("circle", { cx: 8 + i * (w - 16) / (heights.length - 1), cy: h - 6 - v * (h - 16) / 72, r: 3.4,
+                     fill: v > 50 ? "#D7301F" : (i % 2 ? c : "#A9B6C9") }, g);
+    });
+    el("line", { x1: 0, x2: w, y1: h - 6 - 46 * (h - 16) / 72, y2: h - 6 - 46 * (h - 16) / 72, stroke: "#D7301F", "stroke-dasharray": "4 3", "stroke-width": 1.4 }, g);
+    el("line", { x1: 0, x2: w, y1: h - 2, y2: h - 2, stroke: "#CBD5E1", "stroke-width": 1.4 }, g);
+  } else if (kind === "matrix") {
+    const cols = ["#C6DBEF", "#FD8D3C"];
+    for (let r = 0; r < 5; r++) for (let k = 0; k < 8; k++) {
+      const v = (r * 3 + k * 5 + (r * k) % 3) % 4 === 0 ? 1 : 0;
+      el("rect", { x: k * (w / 8) + 1, y: r * (h / 5) + 1, width: w / 8 - 3, height: h / 5 - 3, rx: 2, fill: cols[v] }, g);
+    }
+  } else if (kind === "plant") {
+    el("path", { d: `M${w / 2},${h} C${w / 2},${h * 0.6} ${w / 2},${h * 0.4} ${w / 2},${h * 0.1}`, stroke: "#3B7D3B", "stroke-width": 3, fill: "none" }, g);
+    [[0.65, -1], [0.45, 1], [0.28, -1]].forEach(([fy, s]) => {
+      const yy = h * fy;
+      el("path", { d: `M${w / 2},${yy} q${s * 28},-22 ${s * 46},-8 q${-s * 22},20 ${-s * 46},8 z`, fill: "#7FBF7F", stroke: "#3B7D3B", "stroke-width": 1.3 }, g);
+    });
+    el("ellipse", { cx: w / 2, cy: h * 0.1, rx: 7, ry: 11, fill: "#E8B04A" }, g);
+  } else if (kind === "clean") {
+    const raw = ["A", "R", "N", "G"], clean = ["AA", "AG", "NN", "GG"];
+    raw.forEach((s, i) => {
+      text(14, 18 + i * 21, s, { class: "mono", "font-size": 14, fill: "#64748B" }, g);
+      text(48, 18 + i * 21, "→", { "font-size": 14, fill: "#94A3B8" }, g);
+      const f = s === "N" ? "#E2E8F0" : (s === "R" ? "#D8D2EE" : "#C6DBEF");
+      el("rect", { x: 78, y: 4 + i * 21, width: 40, height: 18, rx: 4, fill: f }, g);
+      text(98, 18 + i * 21, clean[i], { class: "mono", "font-size": 12.5, "text-anchor": "middle", fill: "#1E293B" }, g);
+    });
+  } else if (kind === "window") {
+    const mid = h * 0.62;
+    el("line", { x1: 0, x2: w, y1: mid, y2: mid, stroke: "#CBD5E1", "stroke-width": 7, "stroke-linecap": "round" }, g);
+    for (let i = 0; i < 24; i++) {
+      const xx = 6 + i * (w - 12) / 23;
+      const inside = xx > w * 0.22 && xx < w * 0.78;
+      el("line", { x1: xx, x2: xx, y1: mid - 9, y2: mid + 9, stroke: inside ? c : "#CBD5E1", "stroke-width": 2 }, g);
+    }
+    el("path", { d: `M${w * 0.22},${mid - 18} v-8 h${w * 0.56} v8`, fill: "none", stroke: c, "stroke-width": 2 }, g);
+    el("circle", { cx: w / 2, cy: mid, r: 6, fill: "#D7301F" }, g);
+    text(w / 2, mid - 32, "± 1 Mb", { "font-size": 12.5, "text-anchor": "middle", fill: c, "font-weight": 700 }, g);
+  } else if (kind === "ld") {
+    const n = 7, s = (w - 10) / n;
+    const vals = [[0.9, 0.8, 0.4, 0.2, 0.1, 0.05], [0.85, 0.5, 0.3, 0.1, 0.1], [0.7, 0.4, 0.2, 0.1], [0.9, 0.6, 0.2], [0.8, 0.3], [0.6]];
+    const col = v => `rgba(215, 48, 31, ${0.08 + 0.92 * v})`;
+    for (let i = 0; i < n - 1; i++) for (let j = 0; j < n - 1 - i; j++) {
+      const cx = 5 + s * (i + (j + 2) / 2), cy = 6 + s * j / 2 + s / 2;
+      el("path", { d: `M${cx - s / 2},${cy} L${cx},${cy - s / 2} L${cx + s / 2},${cy} L${cx},${cy + s / 2} Z`, fill: col(vals[i][j]), stroke: "#ffffff", "stroke-width": 1 }, g);
+    }
+  } else if (kind === "haps") {
+    const rows = [[0, 1, 0, 0, 1, 1, 0], [1, 0, 1, 0, 0, 1, 1], [0, 0, 1, 1, 0, 0, 1]];
+    const lab = ["H1", "H2", "H3"];
+    rows.forEach((r, i) => {
+      text(0, 19 + i * 27, lab[i], { "font-size": 13, "font-weight": 700, fill: "#334155" }, g);
+      r.forEach((v, k) => el("rect", { x: 28 + k * 17.5, y: 5 + i * 27, width: 15, height: 21, rx: 3, fill: v ? "#FD8D3C" : "#C6DBEF" }, g));
+    });
+  } else if (kind === "violin") {
+    const base = h - 4;
+    [[0.2, 30, "#4575B4", "b"], [0.5, 52, "#1A9850", "a"], [0.8, 26, "#4575B4", "b"]].forEach(([fx, top, f, l]) => {
+      const cx = w * fx, ty = base - top - 10;
+      el("path", { d: `M${cx},${ty} C${cx + 18},${ty + 18} ${cx + 16},${base - 6} ${cx},${base} C${cx - 16},${base - 6} ${cx - 18},${ty + 18} ${cx},${ty} Z`, fill: f, "fill-opacity": 0.35, stroke: f, "stroke-width": 1.5 }, g);
+      el("path", { d: `M${cx},${ty + (base - ty) * 0.45} l5,5 l-5,5 l-5,-5 z`, fill: "#ffffff", stroke: "#1E293B", "stroke-width": 1.2 }, g);
+      text(cx, ty - 6, l, { "font-size": 14, "font-weight": 800, "text-anchor": "middle", fill: "#1E293B" }, g);
+    });
+  } else if (kind === "trophy") {
+    el("path", { d: `M${w / 2 - 20},8 h40 v14 c0,18 -10,26 -20,26 c-10,0 -20,-8 -20,-26 z`, fill: "#F2C14E", stroke: "#B8860B", "stroke-width": 1.5 }, g);
+    el("path", { d: `M${w / 2 - 20},14 h-9 c0,12 6,16 11,17 M${w / 2 + 20},14 h9 c0,12 -6,16 -11,17`, fill: "none", stroke: "#B8860B", "stroke-width": 2 }, g);
+    el("rect", { x: w / 2 - 4, y: 48, width: 8, height: 8, fill: "#B8860B" }, g);
+    el("rect", { x: w / 2 - 15, y: 56, width: 30, height: 7, rx: 2, fill: "#8B6508" }, g);
+    text(w / 2, 31, "H3", { "font-size": 13, "font-weight": 800, "text-anchor": "middle", fill: "#5C4300" }, g);
+  } else if (kind === "marker") {
+    for (let k = 0; k < 6; k++) el("rect", { x: 6 + k * 15, y: 18, width: 12, height: 22, rx: 3, fill: k === 3 ? "#1A9850" : "#C6DBEF" }, g);
+    el("path", { d: `M${6 + 3 * 15 + 6},4 l7,9 h-14 z`, fill: "#D7301F" }, g);
+    text(6 + 3 * 15 + 6, 58, "KASP", { "font-size": 12, "font-weight": 800, "text-anchor": "middle", fill: "#1A9850" }, g);
+  } else if (kind === "parents") {
+    [[0, 3], [1, 2], [2, 2], [3, 1]].forEach(([i, nGood]) => {
+      for (let k = 0; k < 3; k++) el("rect", { x: 4 + k * 22, y: 4 + i * 15, width: 19, height: 12, rx: 2, fill: k < nGood ? "#1A9850" : "#E2E8F0" }, g);
+      text(76, 14 + i * 15, `${nGood}/3`, { "font-size": 11, fill: "#475569", "font-weight": 700 }, g);
+    });
+  }
+  return g;
+}
+
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
+const defs = el("defs");
+defs.innerHTML = `
+  <filter id="shadow" x="-10%" y="-10%" width="120%" height="140%">
+    <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0F172A" flood-opacity="0.10"/>
+  </filter>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#94A3B8"/>
+  </marker>
+  <linearGradient id="outGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#1F3B5B"/><stop offset="1" stop-color="#2C6E7F"/>
+  </linearGradient>
+  <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#4575B4"/><stop offset="0.5" stop-color="#7B61C9"/><stop offset="1" stop-color="#1A9850"/>
+  </linearGradient>`;
+
+let y = 40;
+
+// Title
+el("image", { href: "../../icon/logo_2.png", x: 70, y: y - 6, width: 86, height: 86 });
+text(176, y + 34, "How HaploTraitR works", { "font-size": 38, "font-weight": 900, fill: "#0F172A" });
+text(178, y + 66, "From GWAS hits to breeding decisions — all steps run with one call:", { "font-size": 18, fill: "#475569" });
+const callX = 178 + 562;
+const call = text(callX + 12, y + 66, "run_haplotraitr()", { class: "mono", "font-size": 17, fill: "#1A9850", "font-weight": 700 });
+const callW = call.getComputedTextLength() + 24;
+svg.insertBefore(el("rect", { x: callX, y: y + 46, width: callW, height: 28, rx: 7, fill: "#E8F6EE", stroke: "#1A9850", "stroke-opacity": 0.4 }), call);
+el("rect", { x: 176, y: y + 84, width: 300, height: 4, rx: 2, fill: "url(#titleGrad)" });
+y += 128;
+
+// Inputs
+const inW = 360, inGap = 40, inH = 140;
+const inX0 = (W - (3 * inW + 2 * inGap)) / 2;
+text(W / 2, y, "YOUR DATA", { "font-size": 13, "font-weight": 800, "letter-spacing": 3, fill: "#64748B", "text-anchor": "middle" });
+y += 16;
+const inputBottoms = [];
+INPUTS.forEach((inp, i) => {
+  const x = inX0 + i * (inW + inGap);
+  shadowRect(x, y, inW, inH, 16, "#ffffff", "#E2E8F0");
+  el("rect", { x, y, width: inW, height: 7, rx: 3.5, fill: inp.color });
+  icon(inp.icon, x + 18, y + 30, 92, 74, inp.color);
+  text(x + 128, y + 44, inp.title, { "font-size": 20, "font-weight": 800, fill: "#0F172A" });
+  const lines = wrap(inp.text, inW - 146, { "font-size": 14.5 });
+  multiline(x + 128, y + 68, lines, 19, { "font-size": 14.5, fill: "#475569" });
+  text(x + 128, y + 68 + lines.length * 19 + 8, inp.file, { class: "mono", "font-size": 12.5, fill: inp.color });
+  inputBottoms.push(x + inW / 2);
+});
+y += inH;
+
+// Steps
+const cardX = 250, cardW = 980, gapY = 52;
+const textX = cardX + 196, textW = 520, chipX = cardX + cardW - 252;
+const phaseSpans = {};
+y += gapY;
+inputBottoms.forEach(cx => arrow(cx, y - gapY + 4, W / 2 + (cx - W / 2) * 0.12, y));
+
+STEPS.forEach((s, i) => {
+  const ph = PHASES[s.phase];
+  const descLines = wrap(s.text, textW, { "font-size": 15 });
+  const h = Math.max(140, 64 + descLines.length * 20 + 36);
+  shadowRect(cardX, y, cardW, h, 16, "#ffffff", "#E2E8F0");
+  el("rect", { x: cardX, y, width: 150, height: h, rx: 16, fill: ph.light });
+  el("rect", { x: cardX + 134, y, width: 16, height: h, fill: ph.light });
+  icon(s.icon, cardX + 22, y + (h - 80) / 2 + 4, 108, 80, ph.color);
+
+  // number badge
+  el("circle", { cx: cardX + 150, cy: y + 34, r: 19, fill: ph.color, stroke: "#ffffff", "stroke-width": 3 });
+  text(cardX + 150, y + 40.5, String(i + 1), { "font-size": 18, "font-weight": 900, fill: "#ffffff", "text-anchor": "middle" });
+
+  text(textX, y + 40, s.title, { "font-size": 21, "font-weight": 800, fill: "#0F172A" });
+  multiline(textX, y + 66, descLines, 20, { "font-size": 15, fill: "#475569" });
+  text(textX, y + 66 + descLines.length * 20 + 12, s.fns, { class: "mono", "font-size": 12.5, fill: ph.color, "xml:space": "preserve" });
+
+  if (s.chips.length) {
+    text(chipX, y + 30, "SETTINGS", { "font-size": 11, "font-weight": 800, "letter-spacing": 2, fill: "#94A3B8" });
+    s.chips.forEach((c, k) => chip(chipX, y + 42 + k * 31, c, ph.color));
+  }
+
+  if (!phaseSpans[s.phase]) phaseSpans[s.phase] = [y, y + h];
+  phaseSpans[s.phase][1] = y + h;
+  y += h;
+  if (i < STEPS.length - 1) { arrow(W / 2 + 60, y + 4, W / 2 + 60, y + gapY - 4); y += gapY; }
+});
+
+// Decisions
+const decTop = y + gapY + 30;
+const decW = 300, decGap = 40, decH = 196;
+const decX0 = cardX + (cardW - (3 * decW + 2 * decGap)) / 2;
+DECISIONS.forEach((d, i) => {
+  const x = decX0 + i * (decW + decGap);
+  arrow(W / 2 + 60, y + 4, x + decW / 2, decTop - 4, "#94A3B8");
+  shadowRect(x, decTop, decW, decH, 16, "#ffffff", "#BFE3CC");
+  el("rect", { x, y: decTop, width: decW, height: 7, rx: 3.5, fill: PHASES.decide.color });
+  icon(d.icon, x + decW / 2 - 50, decTop + 22, 100, 66, PHASES.decide.color);
+  text(x + decW / 2, decTop + 112, d.title, { "font-size": 19, "font-weight": 800, fill: "#0F172A", "text-anchor": "middle" });
+  const lines = wrap(d.text, decW - 36, { "font-size": 14 });
+  multiline(x + decW / 2, decTop + 136, lines, 18, { "font-size": 14, fill: "#475569", "text-anchor": "middle" });
+});
+phaseSpans.decide = [decTop, decTop + decH];
+text(W / 2 + 60, y + 44, "for every block", { "font-size": 13, "font-style": "italic", fill: "#94A3B8", "text-anchor": "start", dx: 10 });
+y = decTop + decH;
+
+// Outputs
+const outTop = y + gapY + 6;
+const outH = 170;
+DECISIONS.forEach((d, i) => {
+  const x = decX0 + i * (decW + decGap) + decW / 2;
+  arrow(x, y + 4, W / 2 + (x - W / 2) * 0.25, outTop - 4);
+});
+shadowRect(cardX - 90, outTop, cardW + 180, outH, 20, "url(#outGrad)");
+text(cardX - 60, outTop + 38, "RESULTS IN YOUR OUTPUT FOLDER", { "font-size": 13, "font-weight": 800, "letter-spacing": 3, fill: "#9FD8C6" });
+const oW = (cardW + 120) / 3;
+OUTPUTS.forEach((o, i) => {
+  const x = cardX - 60 + i * oW;
+  text(x, outTop + 76, o.title, { "font-size": 20, "font-weight": 800, fill: "#ffffff" });
+  const lines = wrap(o.text, oW - 40, { "font-size": 14.5 });
+  multiline(x, outTop + 102, lines, 19, { "font-size": 14.5, fill: "#CFE3EA" });
+  if (i > 0) el("line", { x1: x - 22, x2: x - 22, y1: outTop + 58, y2: outTop + outH - 24, stroke: "#ffffff", "stroke-opacity": 0.18 });
+});
+y = outTop + outH;
+
+// Phase labels on the left
+Object.entries(phaseSpans).forEach(([key, [top, bottom]]) => {
+  const ph = PHASES[key];
+  const x = 120;
+  el("line", { x1: x, x2: x, y1: top + 6, y2: bottom - 6, stroke: ph.color, "stroke-width": 4, "stroke-linecap": "round" });
+  const midY = (top + bottom) / 2;
+  text(x - 18, midY, ph.name, { "font-size": 13, "font-weight": 900, "letter-spacing": 3, fill: ph.color,
+                                 "text-anchor": "middle", transform: `rotate(-90 ${x - 18} ${midY})` });
+});
+
+// Footer
+y += 44;
+text(W / 2, y, "github.com/AlsammanAlsamman/HaploTraitR", { "font-size": 14, fill: "#94A3B8", "text-anchor": "middle" });
+y += 30;
+
+svg.setAttribute("width", W);
+svg.setAttribute("height", y);
+svg.setAttribute("viewBox", `0 0 ${W} ${y}`);
+document.body.setAttribute("data-height", Math.ceil(y));
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+{
+  ".vscode/settings.json": {
+    "mtime": 1730942921.0,
+    "ast_hash": "f19f542de416b00232e43d713970cf0f",
+    "semantic_hash": ""
+  },
+  "R/HaploTraitR-package.R": {
+    "mtime": 1791115548.2606828,
+    "ast_hash": "2a73bf334bef9b62d6384c591ef9c0a3",
+    "semantic_hash": ""
+  },
+  "R/config.R": {
+    "mtime": 1791115963.825413,
+    "ast_hash": "eae60413c13dedbbf5f315749f89f688",
+    "semantic_hash": ""
+  },
+  "R/data.R": {
+    "mtime": 1791114972.524445,
+    "ast_hash": "6b2a2e4d15e71dafb4b15f15c2fde5e7",
+    "semantic_hash": ""
+  },
+  "R/excel_report.R": {
+    "mtime": 1791115787.8363338,
+    "ast_hash": "5ed3d7309a20476c72508ea5bcbcf76c",
+    "semantic_hash": ""
+  },
+  "R/genotype.R": {
+    "mtime": 1791114578.031558,
+    "ast_hash": "5600149277bc1cb993fd133f33b5039e",
+    "semantic_hash": ""
+  },
+  "R/haplotypes.R": {
+    "mtime": 1791115787.8367271,
+    "ast_hash": "b30bd3bae9239de71d8796af57f81ba4",
+    "semantic_hash": ""
+  },
+  "R/ld_blocks.R": {
+    "mtime": 1791115787.836527,
+    "ast_hash": "59286ee9b392f036c3d2289e5293404f",
+    "semantic_hash": ""
+  },
+  "R/plot_blocks.R": {
+    "mtime": 1791115458.3882918,
+    "ast_hash": "37e446afcbf5461d6ebbca27cf7853e8",
+    "semantic_hash": ""
+  },
+  "R/plot_haplotypes.R": {
+    "mtime": 1791115146.589765,
+    "ast_hash": "7b31373a008356dc91cc73331e4e7788",
+    "semantic_hash": ""
+  },
+  "R/plot_overview.R": {
+    "mtime": 1791115198.4110315,
+    "ast_hash": "360b28260de22019a4e5b5872ebfda0c",
+    "semantic_hash": ""
+  },
+  "R/read_data.R": {
+    "mtime": 1791115787.8366392,
+    "ast_hash": "14058ec375c2b8c1ee121f6f58284625",
+    "semantic_hash": ""
+  },
+  "R/run_haplotraitr.R": {
+    "mtime": 1791115963.8254921,
+    "ast_hash": "695261e7ae9b998ee50295737b1e626d",
+    "semantic_hash": ""
+  },
+  "R/statistics.R": {
+    "mtime": 1791115787.8368082,
+    "ast_hash": "fc79186df84b788e49893c0be28fcab8",
+    "semantic_hash": ""
+  },
+  "R/utils.R": {
+    "mtime": 1791114527.383841,
+    "ast_hash": "4077bf078ef6b5e9cae372ab3441ad53",
+    "semantic_hash": ""
+  },
+  "checks.json": {
+    "mtime": 1730604981.0,
+    "ast_hash": "965a346a183a2c8f752b2791df2b13a9",
+    "semantic_hash": ""
+  },
+  "code.R": {
+    "mtime": 1732031061.0,
+    "ast_hash": "b78179eb61f0affafd10496756785aa7",
+    "semantic_hash": ""
+  },
+  "data_analysis.R": {
+    "mtime": 1736009107.0,
+    "ast_hash": "8f2e664ea6072c0829cd0dffa7228a15",
+    "semantic_hash": ""
+  },
+  "main.R": {
+    "mtime": 1791115291.0593712,
+    "ast_hash": "db84c8eb3adc43fc4fe2d668c17072f4",
+    "semantic_hash": ""
+  },
+  "team.js": {
+    "mtime": 1735738154.0,
+    "ast_hash": "8612e73dac797fcb49eb76dafcb87b56",
+    "semantic_hash": ""
+  },
+  "tests/testthat.R": {
+    "mtime": 1791115198.416432,
+    "ast_hash": "f64fd9368d5e62831ab3a41a16b2f6ae",
+    "semantic_hash": ""
+  },
+  "tests/testthat/test-helpers.R": {
+    "mtime": 1791115221.693442,
+    "ast_hash": "9169128cd02a2f87be703bc9bb86a1f6",
+    "semantic_hash": ""
+  },
+  "tests/testthat/test-pipeline.R": {
+    "mtime": 1791115198.418363,
+    "ast_hash": "54ff7056dc4d939408ba7284e355ff38",
+    "semantic_hash": ""
+  },
+  ".github/workflows/pkgdown.yaml": {
+    "mtime": 1735548853.0,
+    "ast_hash": "126c9ebef76ffb54156d760faa99a500",
+    "semantic_hash": ""
+  },
+  ".github/workflows/pkgdown.yml": {
+    "mtime": 1735533268.0,
+    "ast_hash": "37d9248b4bb3bae69e6e24cb56890fb6",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1791116034.0119815,
+    "ast_hash": "40c0011b62b44cd69e1da92aff17cb0f",
+    "semantic_hash": ""
+  },
+  "_pkgdown.yml": {
+    "mtime": 1735738865.0,
+    "ast_hash": "1715b040a49585333e5e7d0ac53afebd",
+    "semantic_hash": ""
+  },
+  "icon/logo.png": {
+    "mtime": 1737547028.0,
+    "ast_hash": "9f62f61c321a3e31085b5adde36614f5",
+    "semantic_hash": ""
+  },
+  "icon/logo_2.png": {
+    "mtime": 1737547172.0,
+    "ast_hash": "a5a0cb13b6143d5215c78acb2c7d43bb",
+    "semantic_hash": ""
+  },
+  "man/figures/ama.png": {
+    "mtime": 1722445237.0,
+    "ast_hash": "d2217ec53dfa2d0ad8ae433edd1a8a56",
+    "semantic_hash": ""
+  },
+  "man/figures/dk.png": {
+    "mtime": 1735740873.0,
+    "ast_hash": "acd10c81dc83ad30129398b22c4342d2",
+    "semantic_hash": ""
+  },
+  "man/figures/example_effects_summary.png": {
+    "mtime": 1791115254.1009665,
+    "ast_hash": "68d7e37ccad43c080692978ef614f69d",
+    "semantic_hash": ""
+  },
+  "man/figures/example_genome_overview.png": {
+    "mtime": 1791115254.1019952,
+    "ast_hash": "dc6ba1a88bce85c53c4a625e4e9ad5b2",
+    "semantic_hash": ""
+  },
+  "man/figures/example_haplotype_block.png": {
+    "mtime": 1791115254.098445,
+    "ast_hash": "419c8ee8a6883c9e27ed1310e2b9499b",
+    "semantic_hash": ""
+  },
+  "man/figures/example_haplotype_trait.png": {
+    "mtime": 1791115254.0999317,
+    "ast_hash": "f0f6c7e5db5e3874580b9405742944e9",
+    "semantic_hash": ""
+  },
+  "man/figures/kh.png": {
+    "mtime": 1735740962.0,
+    "ast_hash": "059e246fcc881f4aa709e5dd0f415910",
+    "semantic_hash": ""
+  },
+  "man/figures/ob.jpeg": {
+    "mtime": 1735741093.0,
+    "ast_hash": "cc117572c543198cac48a825bdbe2a57",
+    "semantic_hash": ""
+  },
+  "man/figures/to.jpeg": {
+    "mtime": 1735740802.0,
+    "ast_hash": "a130ee4474eb82a4d49959fc7d3ddc66",
+    "semantic_hash": ""
+  },
+  "man/figures/va.jpeg": {
+    "mtime": 1735741254.0,
+    "ast_hash": "25282aa6a9eb9de2bc0ef0aa7f195404",
+    "semantic_hash": ""
+  },
+  "man/figures/zk.jpg": {
+    "mtime": 1735733549.0,
+    "ast_hash": "2972479b12f1554f48722e90afc102f7",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/Haplotypes_SNPs_Across_Genome.png": {
+    "mtime": 1737899734.0,
+    "ast_hash": "6f8039d99daf011bf4c9d63bebf32c01",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/LD_hap_comb_matrices_plots/2H:580548473_ld_comb_matrix.png": {
+    "mtime": 1737899705.0,
+    "ast_hash": "18890c8c3ac3390867dbf7220e29f074",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/LD_hap_comb_matrices_plots/2H:580550249_ld_comb_matrix.png": {
+    "mtime": 1737899711.0,
+    "ast_hash": "18890c8c3ac3390867dbf7220e29f074",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/LD_hap_comb_matrices_plots/2H:581003787_ld_comb_matrix.png": {
+    "mtime": 1737899716.0,
+    "ast_hash": "8a27ecae56618c9661609719ac847ba9",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/LD_hap_comb_matrices_plots/2H:581007791_ld_comb_matrix.png": {
+    "mtime": 1737899721.0,
+    "ast_hash": "8a27ecae56618c9661609719ac847ba9",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/LD_hap_comb_matrices_plots/2H:582673984_ld_comb_matrix.png": {
+    "mtime": 1737899726.0,
+    "ast_hash": "1a39a8da6820411b36750f2979c7b287",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/boxplots_Area/2H:580548473_boxplot.png": {
+    "mtime": 1737899686.0,
+    "ast_hash": "4262f64641404610921ff4fcaaed5e66",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/boxplots_Area/2H:580550249_boxplot.png": {
+    "mtime": 1737899686.0,
+    "ast_hash": "287f88b9a86d96ec58b0a38594072dc6",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/boxplots_Area/2H:581003787_boxplot.png": {
+    "mtime": 1737899687.0,
+    "ast_hash": "908dc82077c5583102306bb4f63c4790",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/boxplots_Area/2H:581007791_boxplot.png": {
+    "mtime": 1737899688.0,
+    "ast_hash": "b0688efbe7dd2ff7977fa003f44fdfca",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/boxplots_Area/2H:582673984_boxplot.png": {
+    "mtime": 1737899689.0,
+    "ast_hash": "8193eef755436225d1a4716582f005d6",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/haplotype_combination_boxplots/significant_negative/2H:582673984_boxplot.png": {
+    "mtime": 1737899699.0,
+    "ast_hash": "948a99b64136380cee0913352fa4c5c3",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/haplotype_combination_boxplots/significant_positive/2H:580548473_boxplot.png": {
+    "mtime": 1737899695.0,
+    "ast_hash": "a0055dce6ce444e10196456f776825f5",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/haplotype_combination_boxplots/significant_positive/2H:580550249_boxplot.png": {
+    "mtime": 1737899696.0,
+    "ast_hash": "ffc40ebb802d9e797dccb89fac5b3d7b",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/haplotype_combination_boxplots/significant_positive/2H:581003787_boxplot.png": {
+    "mtime": 1737899697.0,
+    "ast_hash": "1ed614bdd5fb5c038bffd383bed1f682",
+    "semantic_hash": ""
+  },
+  "sampleout/haplotraitR_run/haplotype_combination_boxplots/significant_positive/2H:581007791_boxplot.png": {
+    "mtime": 1737899698.0,
+    "ast_hash": "5a3a696640ae2eb7e6ba481ddf3a4330",
+    "semantic_hash": ""
+  },
+  "R/console.R": {
+    "mtime": 1791115983.5481045,
+    "ast_hash": "c1a27e779275fe90f136b5b21a0bf2f8",
+    "semantic_hash": ""
+  },
+  "man/figures/example_console.png": {
+    "mtime": 1791116033.9229388,
+    "ast_hash": "4e24ee9de65b346fe957e2f6e246ae9c",
+    "semantic_hash": ""
+  }
+}
